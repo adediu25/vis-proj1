@@ -1,13 +1,16 @@
-let data;
-
 d3.csv('data/national_health_data.csv')
-    .then(_data => {
-        data = _data
+    .then(data => {
         // work with data
         data.forEach(d => {
-            console.log(d.display_name);
+            d.median_household_income = +d.median_household_income;
+            d.park_access = +d.park_access;
+            console.log(d);
         });
-    }, data)
+
+        const scatterplot = new Scatterplot({parentElement: '#chart-area'}, data);
+
+        scatterplot.updateVis()
+    })
     .catch(error => {
         console.error('Error:');
         console.log(error);
