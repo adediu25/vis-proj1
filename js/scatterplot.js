@@ -46,14 +46,14 @@ class Scatterplot {
             .attr('x', vis.width + 10)
             .attr('dy', '.71em')
             .style('text-anchor', 'end')
-            .text('Distance');
+            .text('Median Household Income');
 
         vis.svg.append('text')
             .attr('class', 'axis-title')
             .attr('x', 0)
             .attr('y', 0)
             .attr('dy', '.71em')
-            .text('Hours');
+            .text('Park Access');
     }
 
     updateVis() {
@@ -80,7 +80,7 @@ class Scatterplot {
                 .attr('r', 4)
                 .attr('cy', d => vis.yScale(vis.yValue(d)))
                 .attr('cx', d => vis.xScale(vis.xValue(d)))
-                .attr('fill', 'black');
+                .attr('fill', '#008CBA');
    
         vis.xAxisG
             .call(vis.xAxis)

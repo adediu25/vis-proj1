@@ -1,3 +1,10 @@
+body {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    padding: 30px;
+    background: #f7f7f7;
+  }
+
 /* Select Buttons */
 .button {
     border: none;
@@ -43,6 +50,16 @@
     background-color: #ba3200;
     color: white;
   }
+
+/* chart stuff */
+.axis-title {
+    font-size: 14px;
+    fill: #888;
+}
+
+#chart-area {
+    padding: 8px;
+}
 
 /* Tooltip */
 #tooltip {
@@ -90,16 +107,4 @@
     height: 12px;
     margin-right: 3px;
     display: inline-block;
-  }
-  .legend-btn[category="tropical-cyclone"] .legend-symbol {
-    background: #E15759;
-  }
-  .legend-btn[category="drought-wildfire"] .legend-symbol {
-    background: #76B7B2;
-  }
-  .legend-btn[category="severe-storm"] .legend-symbol {
-    background: #ECD948;
-  }
-  .legend-btn[category="flooding"] .legend-symbol {
-    background: #59A14F;
   }
