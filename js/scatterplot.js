@@ -2,9 +2,9 @@ class Scatterplot {
     constructor(_config, _data) {
         this.config = {
             parentElement: _config.parentElement,
-            containerWidth: _config.containerWidth || 600,
-            containerHeight: _config.containerHeight || 400,
-            margin: _config.margin || {top: 25, right: 20, bottom: 20, left: 35}
+            containerWidth: _config.containerWidth || 700,
+            containerHeight: _config.containerHeight || 500,
+            margin: _config.margin || {top: 30, right: 20, bottom: 20, left: 35}
         }
         this.data = _data;
         this.initVis();
@@ -74,7 +74,8 @@ class Scatterplot {
         let vis = this;
 
         vis.chart.selectAll('circle')
-                .data(vis.data)
+                // filter out data not collected
+                .data(vis.data.filter(d => d.median_household_income >= 0 && d.park_access >= 0))
                 .enter()
             .append('circle')
                 .attr('r', 4)
