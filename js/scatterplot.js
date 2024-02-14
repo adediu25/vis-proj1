@@ -4,7 +4,11 @@ class Scatterplot {
             parentElement: _config.parentElement,
             containerWidth: _config.containerWidth || 700,
             containerHeight: _config.containerHeight || 500,
-            margin: _config.margin || {top: 30, right: 20, bottom: 20, left: 35}
+            margin: _config.margin || {top: 30, right: 20, bottom: 20, left: 35},
+            dataFuncX: _config.dataFuncX || function(d){return d.median_household_income;},
+            dataFuncY: _config.dataFuncY || function(d){return d.park_access;},
+            axisTitleX: _config.axisTitleX || "Median Household Income (USD)",
+            axisTitleY: _config.axisTitleY || "Park Access"
         }
         this.data = _data;
         this.initVis();
@@ -46,26 +50,24 @@ class Scatterplot {
             .attr('x', vis.width + 10)
             .attr('dy', '.71em')
             .style('text-anchor', 'end')
-            .text('Median Household Income');
+            .text(vis.config.axisTitleX);
 
         vis.svg.append('text')
             .attr('class', 'axis-title')
             .attr('x', 0)
             .attr('y', 0)
             .attr('dy', '.71em')
-            .text('Park Access');
+            .text(vis.config.axisTitleY);
     }
 
     updateVis() {
         let vis = this;
 
-        vis.xValue = d => d.median_household_income;
-        vis.yValue = d => d.park_access;
+        // vis.xValue = d => d.median_household_income;
+        // vis.yValue = d => d.park_access;
 
-        console.log(vis.xValue)
-
-        vis.xScale.domain([0, d3.max(vis.data, vis.xValue)]);
-        vis.yScale.domain([0, d3.max(vis.data, vis.yValue)]);
+        vis.xScale.domain([0, d3.max(vis.data, vis.config.dataFuncX)]);
+        vis.yScale.domain([0, d3.max(vis.data, vis.config.dataFuncY)]);
 
         vis.renderVis();
     }
@@ -75,12 +77,12 @@ class Scatterplot {
 
         vis.chart.selectAll('circle')
                 // filter out data not collected
-                .data(vis.data.filter(d => d.median_household_income >= 0 && d.park_access >= 0))
+                .data(vis.data.filter(d => vis.config.dataFuncX(d) >= 0 && vis.config.dataFuncY(d) >= 0))
                 .enter()
             .append('circle')
                 .attr('r', 4)
-                .attr('cy', d => vis.yScale(vis.yValue(d)))
-                .attr('cx', d => vis.xScale(vis.xValue(d)))
+                .attr('cy', d => vis.yScale(vis.config.dataFuncY(d)))
+                .attr('cx', d => vis.xScale(vis.config.dataFuncX(d)))
                 .attr('fill', 'steelblue');
    
         vis.xAxisG
