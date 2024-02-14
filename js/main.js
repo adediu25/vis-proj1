@@ -28,7 +28,6 @@ Promise.all([
             d.percent_stroke = +d.percent_stroke;
         });
 
-        console.log(countyData[0]);
         // Add county data to respective county in TopoJSON
         geoData.objects.counties.geometries.forEach(d => {
             // county_data will stay null if we do not have that county in the data
