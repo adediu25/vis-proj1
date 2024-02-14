@@ -35,7 +35,7 @@ class ChoroplethMap {
             .attr('transform', `translate(${vis.config.margin.left},${vis.config.margin.top})`);
 
         // Initialize projection and path generator
-        vis.projection = d3.geoMercator();
+        vis.projection = d3.geoAlbersUsa();
         vis.geoPath = d3.geoPath().projection(vis.projection);
 
         vis.colorScale = d3.scaleLinear()
@@ -85,10 +85,10 @@ class ChoroplethMap {
 
     renderVis() {
         let vis = this;
-    
+        console.log(vis.data.objects.counties.geometries);
         // Convert compressed TopoJSON to GeoJSON format
         const counties = topojson.feature(vis.data, vis.data.objects.counties)
-    
+  
         // Defines the scale of the projection so that the geometry fits within the SVG area
         vis.projection.fitSize([vis.width, vis.height], counties);
     

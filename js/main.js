@@ -39,8 +39,14 @@ Promise.all([
             }
         });
 
-        const choroplethMap = new ChoroplethMap({
-            parentElement: '#map'
+        const choroplethMap1 = new ChoroplethMap({
+            parentElement: '#map1'
+        }, geoData);
+
+        const choroplethMap2 = new ChoroplethMap({
+            parentElement: '#map2',
+            dataFunc: function(d) {return d.park_access;},
+            axisTitle: "Park Access"
         }, geoData);
 
         const scatterplot = new Scatterplot({parentElement: '#chart-area'}, countyData);

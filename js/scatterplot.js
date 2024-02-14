@@ -80,7 +80,7 @@ class Scatterplot {
                 .data(vis.data.filter(d => vis.config.dataFuncX(d) >= 0 && vis.config.dataFuncY(d) >= 0))
                 .enter()
             .append('circle')
-                .attr('r', 4)
+                .attr('r', 3)
                 .attr('cy', d => vis.yScale(vis.config.dataFuncY(d)))
                 .attr('cx', d => vis.xScale(vis.config.dataFuncX(d)))
                 .attr('fill', 'steelblue');
