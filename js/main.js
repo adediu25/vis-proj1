@@ -47,7 +47,11 @@ Promise.all([
         const scatterplot = new Scatterplot({parentElement: '#chart-area'}, countyData);
         scatterplot.updateVis();
 
-        const histogram = new Histogram({parentElement: '#histogram'}, countyData);
+        const histogram = new Histogram({
+            parentElement: '#histogram',
+            dataFunc: function(d) {return d.park_access;},
+            axisTitle: "Park Acess"
+        }, countyData);
         histogram.updateVis();
     })
     .catch(error => {
