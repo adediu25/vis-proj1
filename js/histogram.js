@@ -7,7 +7,9 @@ class Histogram {
           parentElement: _config.parentElement,
           containerWidth: _config.containerWidth || 500,
           containerHeight: _config.containerHeight || 400,
-          margin: _config.margin || {top: 5, right: 5, bottom: 20, left: 50}
+          margin: _config.margin || {top: 5, right: 5, bottom: 20, left: 50},
+          dataFunc: _config.dataFunc || function(d){return d.median_household_income;},
+          axisTitle: _config.axisTitle || "Median Household Income (USD)"
         }
         this.data = _data;
         this.initVis();
@@ -57,11 +59,11 @@ class Histogram {
 
 
         vis.hist = d3.bin()
-            .value(d => d.median_household_income)
+            .value(vis.config.dataFunc)
             .thresholds(20);
             
-        
-        vis.bins = vis.hist(vis.data.filter(d => d.median_household_income >= 0));
+
+        vis.bins = vis.hist(vis.data.filter(d => vis.config.dataFunc(d) >= 0));
         console.log(vis.bins[0].x1);
 
         // vis.xScale.domain([0, d3.max(vis.data, d => d.median_household_income)]);
