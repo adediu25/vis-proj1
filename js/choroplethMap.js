@@ -9,7 +9,9 @@ class ChoroplethMap {
           legendBottom: 50,
           legendLeft: 50,
           legendRectHeight: 12, 
-          legendRectWidth: 150
+          legendRectWidth: 150,
+          geoDataFunc: _config.geoDataFunc || function(d){return d.properties.county_data.median_household_income;},
+          axisTitle: _config.axisTitle || "Median Household Income (USD)"
         }
         this.data = _data;
         this.initVis();
@@ -58,14 +60,16 @@ class ChoroplethMap {
             .attr('class', 'legend-title')
             .attr('dy', '.35em')
             .attr('y', -10)
-            .text('Pop. density per square km')
+            .text(vis.config.axisTitle)
 
         vis.updateVis();
     }
 
     updateVis() {
         let vis = this;
-        const dataExtent = d3.extent(vis.data.objects.counties.geometries.filter(d => d.properties.county_data != null), (d) => d.properties.county_data.park_access);
+        const dataExtent = d3.extent(vis.data.objects.counties.geometries.filter(d => d.properties.county_data != null), vis.config.geoDataFunc);
+        // const dataExtent = d3.extent(vis.data.objects.counties.geometries.filter(d => d.properties.county_data != null), (d) => d.properties.county_data.park_access);
+
         
         // Update color scale
         vis.colorScale.domain(dataExtent);
@@ -96,7 +100,7 @@ class ChoroplethMap {
             .attr('d', vis.geoPath)
             .attr('fill', d => {
               if (d.properties.county_data) {
-                return vis.colorScale(d.properties.county_data.park_access);
+                return vis.colorScale(vis.config.geoDataFunc(d));
               } else {
                 return 'url(#lightstripe)';
               }
