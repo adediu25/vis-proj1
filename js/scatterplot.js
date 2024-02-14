@@ -81,7 +81,7 @@ class Scatterplot {
                 .attr('r', 4)
                 .attr('cy', d => vis.yScale(vis.yValue(d)))
                 .attr('cx', d => vis.xScale(vis.xValue(d)))
-                .attr('fill', '#008CBA');
+                .attr('fill', 'steelblue');
    
         vis.xAxisG
             .call(vis.xAxis)

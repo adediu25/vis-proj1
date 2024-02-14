@@ -46,6 +46,9 @@ Promise.all([
 
         const scatterplot = new Scatterplot({parentElement: '#chart-area'}, countyData);
         scatterplot.updateVis();
+
+        const histogram = new Histogram({parentElement: '#histogram'}, countyData);
+        histogram.updateVis();
     })
     .catch(error => {
         console.error('Error:');
