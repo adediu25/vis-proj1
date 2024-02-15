@@ -45,7 +45,7 @@ Promise.all([
 
         const choroplethMap2 = new ChoroplethMap({
             parentElement: '#map2',
-            dataFunc: function(d) {return d.park_access;},
+            geoDataFunc: function(d) {return d.properties.county_data.park_access;},
             axisTitle: "Park Access"
         }, geoData);
 

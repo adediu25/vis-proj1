@@ -5,6 +5,42 @@ body {
     background: #f7f7f7;
   }
 
+svg{
+  display: block;
+  margin: auto;
+}
+
+/* chart stuff */
+.axis-title {
+  font-size: 14px;
+  fill: #888;
+}
+
+#scatterplot {
+  padding: 8px;
+}
+
+.inline {
+  display: inline-block;
+  padding: 8px;
+}
+
+.histogram {
+  text-align: center;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.map {
+  text-align: center;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* Select Buttons */
 .button {
     border: none;
@@ -51,15 +87,10 @@ body {
     color: white;
   }
 
-/* chart stuff */
-.axis-title {
-    font-size: 14px;
-    fill: #888;
-}
-
-#chart-area {
-    padding: 8px;
-}
+/* .parent {
+  display: grid;
+  grid-template-columns: 1fr 1fr
+} */
 
 /* Tooltip */
 #tooltip {

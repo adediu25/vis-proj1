@@ -67,7 +67,9 @@ class ChoroplethMap {
 
     updateVis() {
         let vis = this;
-        const dataExtent = d3.extent(vis.data.objects.counties.geometries.filter(d => d.properties.county_data != null), vis.config.geoDataFunc);
+        
+        // prevent issues with counties not included in data but included in json
+        const dataExtent = d3.extent(vis.data.objects.counties.geometries.filter(d => d.properties.county_data != null && vis.config.geoDataFunc(d) >= 0), vis.config.geoDataFunc);
         // const dataExtent = d3.extent(vis.data.objects.counties.geometries.filter(d => d.properties.county_data != null), (d) => d.properties.county_data.park_access);
 
         
@@ -85,7 +87,6 @@ class ChoroplethMap {
 
     renderVis() {
         let vis = this;
-        console.log(vis.data.objects.counties.geometries);
         // Convert compressed TopoJSON to GeoJSON format
         const counties = topojson.feature(vis.data, vis.data.objects.counties)
   
@@ -99,7 +100,7 @@ class ChoroplethMap {
             .attr('class', 'county')
             .attr('d', vis.geoPath)
             .attr('fill', d => {
-              if (d.properties.county_data) {
+              if (d.properties.county_data && vis.config.geoDataFunc(d) >= 0) {
                 return vis.colorScale(vis.config.geoDataFunc(d));
               } else {
                 return 'url(#lightstripe)';
