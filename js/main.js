@@ -53,14 +53,14 @@ Promise.all([
         scatterplot.updateVis();
 
         const histogram1 = new Histogram({
-            parentElement: '#histogram1',
-            dataFunc: function(d) {return d.park_access;},
-            axisTitle: "Park Access"
+            parentElement: '#histogram1'
         }, countyData);
         histogram1.updateVis();
-
+        
         const histogram2 = new Histogram({
-            parentElement: '#histogram2'
+            parentElement: '#histogram2',
+            dataFunc: function(d) {return d.park_access;},
+            axisTitle: "Park Access"
         }, countyData);
         histogram2.updateVis();
     })
