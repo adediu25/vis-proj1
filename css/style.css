@@ -2,9 +2,19 @@ body {
     font-family: 'Noto Sans JP', sans-serif;
     font-size: 13px;
     padding: 30px;
-    background: #f7f7f7;
     text-align: center;
   }
+
+  /* dark mode */
+  /* body {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    padding: 30px;
+    background: #353535;
+    fill: #fff;
+    color: #fff;
+    text-align: center;
+  } */
 
 svg{
   display: block;
@@ -40,6 +50,12 @@ svg{
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+#state-borders {
+  fill:none;
+  stroke-width: 2px;
+  stroke: #fff;
 }
 
 /* Select Buttons */
