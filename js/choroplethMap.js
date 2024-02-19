@@ -62,6 +62,11 @@ class ChoroplethMap {
             .attr('y', -10)
             .text(vis.config.axisTitle)
 
+        vis.chart.append('path')
+          .datum(topojson.mesh(vis.data, vis.data.objects.states, function(a,b){return a !== b;}))
+          .attr("id", "state-borders")
+          .attr('d', vis.geoPath);
+
         vis.updateVis();
     }
 
@@ -94,7 +99,7 @@ class ChoroplethMap {
         vis.projection.fitSize([vis.width, vis.height], counties);
     
         // Append world map
-        const countryPath = vis.chart.selectAll('.county')
+        const countyPath = vis.chart.selectAll('.county')
             .data(counties.features)
           .join('path')
             .attr('class', 'county')
@@ -103,11 +108,12 @@ class ChoroplethMap {
               if (d.properties.county_data && vis.config.geoDataFunc(d) >= 0) {
                 return vis.colorScale(vis.config.geoDataFunc(d));
               } else {
+                console.log("Returning lightstripe")
                 return 'url(#lightstripe)';
               }
             });
     
-        // countryPath
+        // countyPath
         //     .on('mousemove', (event,d) => {
         //       const popDensity = d.properties.pop_density ? `<strong>${d.properties.pop_density}</strong> pop. density per km<sup>2</sup>` : 'No data available'; 
         //       d3.select('#tooltip')
@@ -144,5 +150,12 @@ class ChoroplethMap {
             .attr('stop-color', d => d.color);
     
         vis.legendRect.attr('fill', 'url(#legend-gradient)');
+
+        // update legend label
+        vis.legend.selectAll('.legend-title').join('text')
+            .attr('class', 'legend-title')
+            .attr('dy', '.35em')
+            .attr('y', -10)
+            .text(vis.config.axisTitle)
       }
 }

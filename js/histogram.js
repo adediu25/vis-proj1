@@ -25,6 +25,7 @@ class Histogram {
             .append("svg")
                 .attr("width", vis.config.containerWidth)
                 .attr("height", vis.config.containerHeight)
+
         vis.chart = vis.svg
             .append("g")
                 .attr("transform",`translate(${vis.config.margin.left},${vis.config.margin.top})`);
@@ -79,8 +80,7 @@ class Histogram {
 
         vis.chart.selectAll('.bar')
             .data(vis.bins)
-            .enter()
-        .append('rect')
+        .join('rect')
             .attr('class', 'bar')
             .attr('width', d => vis.xScale(d.x1) - vis.xScale(d.x0) - 1)
             .attr('height', d => vis.yScale(0) - vis.yScale(d.length))

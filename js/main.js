@@ -1,3 +1,6 @@
+// global objects
+let histogram1, histogram2, choroplethMap1, choroplethMap2, scatterplot;
+
 Promise.all([
     d3.json('data/usa_counties.json'),
     d3.csv('data/national_health_data.csv')
@@ -39,25 +42,25 @@ Promise.all([
             }
         });
 
-        const choroplethMap1 = new ChoroplethMap({
+        choroplethMap1 = new ChoroplethMap({
             parentElement: '#map1'
         }, geoData);
 
-        const choroplethMap2 = new ChoroplethMap({
+        choroplethMap2 = new ChoroplethMap({
             parentElement: '#map2',
             geoDataFunc: function(d) {return d.properties.county_data.park_access;},
             axisTitle: "Park Access"
         }, geoData);
 
-        const scatterplot = new Scatterplot({parentElement: '#chart-area'}, countyData);
+        scatterplot = new Scatterplot({parentElement: '#scatterplot'}, countyData);
         scatterplot.updateVis();
 
-        const histogram1 = new Histogram({
+        histogram1 = new Histogram({
             parentElement: '#histogram1'
         }, countyData);
         histogram1.updateVis();
         
-        const histogram2 = new Histogram({
+        histogram2 = new Histogram({
             parentElement: '#histogram2',
             dataFunc: function(d) {return d.park_access;},
             axisTitle: "Park Access"
@@ -68,3 +71,84 @@ Promise.all([
         console.error('Error:');
         console.log(error);
     });
+
+// event handler for first attribute dropdown
+d3.select("#dataX").on("input", function(){
+    console.log(getDataFunc(this.value));
+    chooseX(getDataFunc(this.value), this.options[this.selectedIndex].innerHTML);
+});
+
+// event handler for second attribute dropdown
+d3.select("#dataY").on("input", function(){
+    console.log(getDataFunc(this.value));
+    chooseY(getDataFunc(this.value), this.options[this.selectedIndex].innerHTML);
+});
+
+// returns anon function which will be given to each construct
+// to specify which attribute to pull from data and graph
+function getDataFunc(attr){
+    switch (attr) {
+        case "poverty_perc":
+            return {dataFunc: function(d) {return d.poverty_perc}, geoDataFunc: function(d) {return d.properties.county_data.poverty_perc}};
+        case "median_household_income":
+            return {dataFunc: function(d) {return d.median_household_income}, geoDataFunc: function(d) {return d.properties.county_data.median_household_income}};
+        case "education_less_than_high_school_percent":
+            return {dataFunc: function(d) {return d.education_less_than_high_school_percent}, geoDataFunc: function(d) {return d.properties.county_data.education_less_than_high_school_percent}};
+        case "air_quality":
+            return {dataFunc: function(d) {return d.air_quality}, geoDataFunc: function(d) {return d.properties.county_data.air_quality}};
+        case "park_access":
+            return {dataFunc: function(d) {return d.park_access}, geoDataFunc: function(d) {return d.properties.county_data.park_access}};
+        case "percent_inactive":
+            return {dataFunc: function(d) {return d.percent_inactive}, geoDataFunc: function(d) {return d.properties.county_data.percent_inactive}};
+        case "percent_smoking":
+            return {dataFunc: function(d) {return d.percent_smoking}, geoDataFunc: function(d) {return d.properties.county_data.percent_smoking}};
+        case "elderly_percentage":
+            return {dataFunc: function(d) {return d.elderly_percentage}, geoDataFunc: function(d) {return d.properties.county_data.elderly_percentage}};
+        case "number_of_hospitals":
+            return {dataFunc: function(d) {return d.number_of_hospitals}, geoDataFunc: function(d) {return d.properties.county_data.number_of_hospitals}};
+        case "number_of_primary_care_physicians":
+            return {dataFunc: function(d) {return d.number_of_primary_care_physicians}, geoDataFunc: function(d) {return d.properties.county_data.number_of_primary_care_physicians}};
+        case "percent_no_heath_insurance":
+            return {dataFunc: function(d) {return d.percent_no_heath_insurance}, geoDataFunc: function(d) {return d.properties.county_data.percent_no_heath_insurance}};
+        case "percent_high_blood_pressure":
+            return {dataFunc: function(d) {return d.percent_high_blood_pressure}, geoDataFunc: function(d) {return d.properties.county_data.percent_high_blood_pressure}};
+        case "percent_coronary_heart_disease":
+            return {dataFunc: function(d) {return d.percent_coronary_heart_disease}, geoDataFunc: function(d) {return d.properties.county_data.percent_coronary_heart_disease}};
+        case "percent_stroke":
+            return {dataFunc: function(d) {return d.percent_stroke}, geoDataFunc: function(d) {return d.properties.county_data.percent_stroke}};
+        case "percent_high_cholesterol":
+            return {dataFunc: function(d) {return d.percent_high_cholesterol}, geoDataFunc: function(d) {return d.properties.county_data.percent_high_cholesterol}};
+        default:
+            break;
+    }
+}
+
+// updates 1st data attr in charts
+function chooseX(funcs, title){
+    console.log(histogram1);
+    histogram1.config.dataFunc = funcs.dataFunc;
+    histogram1.config.axisTitle = title;
+    histogram1.updateVis();
+
+    choroplethMap1.config.geoDataFunc = funcs.geoDataFunc;
+    choroplethMap1.config.axisTitle = title;
+    choroplethMap1.updateVis();
+
+    scatterplot.config.dataFuncX = funcs.dataFunc;
+    scatterplot.config.axisTitleX = title;
+    scatterplot.updateVis();
+}
+
+function chooseY(funcs, title){
+    histogram2.config.dataFunc = funcs.dataFunc;
+    histogram2.config.axisTitle = title;
+    histogram2.updateVis();
+
+    choroplethMap2.config.geoDataFunc = funcs.geoDataFunc;
+    choroplethMap2.config.axisTitle = title;
+    choroplethMap2.updateVis();
+
+    scatterplot.config.dataFuncY = funcs.dataFunc;
+    scatterplot.config.axisTitleY = title;
+    scatterplot.updateVis();
+}

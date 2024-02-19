@@ -17,6 +17,11 @@ class Scatterplot {
     initVis(){
         let vis = this;
 
+        vis.svg = d3.select(vis.config.parentElement)
+            .append("svg")
+                .attr("width", vis.config.containerWidth)
+                .attr("height", vis.config.containerHeight)
+
         vis.width = vis.config.containerWidth - vis.config.margin.left - vis.config.margin.right;
         vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom;
     
@@ -29,10 +34,6 @@ class Scatterplot {
         vis.xAxis = d3.axisBottom(vis.xScale);
 
         vis.yAxis = d3.axisLeft(vis.yScale);
-
-        vis.svg = d3.select(vis.config.parentElement)
-            .attr('width', vis.config.containerWidth)
-            .attr('height', vis.config.containerHeight);
         
         vis.chart = vis.svg.append('g')
             .attr('transform', `translate(${vis.config.margin.left},${vis.config.margin.top})`);
@@ -45,7 +46,7 @@ class Scatterplot {
             .attr('class', 'axis y-axis');
 
         vis.chart.append('text')
-            .attr('class', 'axis-title')
+            .attr('class', 'x-axis-title')
             .attr('y', vis.height - 15)
             .attr('x', vis.width + 10)
             .attr('dy', '.71em')
@@ -53,7 +54,7 @@ class Scatterplot {
             .text(vis.config.axisTitleX);
 
         vis.svg.append('text')
-            .attr('class', 'axis-title')
+            .attr('class', 'y-axis-title')
             .attr('x', 0)
             .attr('y', 0)
             .attr('dy', '.71em')
@@ -62,9 +63,6 @@ class Scatterplot {
 
     updateVis() {
         let vis = this;
-
-        // vis.xValue = d => d.median_household_income;
-        // vis.yValue = d => d.park_access;
 
         vis.xScale.domain([0, d3.max(vis.data, vis.config.dataFuncX)]);
         vis.yScale.domain([0, d3.max(vis.data, vis.config.dataFuncY)]);
@@ -75,11 +73,26 @@ class Scatterplot {
     renderVis() {
         let vis = this;
 
+        // update x axis label
+        vis.chart.selectAll('.x-axis-title').join('text')
+            .attr('class', 'x-axis-title')
+            .attr('y', vis.height - 15)
+            .attr('x', vis.width + 10)
+            .attr('dy', '.71em')
+            .style('text-anchor', 'end')
+            .text(vis.config.axisTitleX);
+
+        vis.svg.selectAll('.y-axis-title').join('text')
+            .attr('class', 'y-axis-title')
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr('dy', '.71em')
+            .text(vis.config.axisTitleY);
+
         vis.chart.selectAll('circle')
                 // filter out data not collected
                 .data(vis.data.filter(d => vis.config.dataFuncX(d) >= 0 && vis.config.dataFuncY(d) >= 0))
-                .enter()
-            .append('circle')
+            .join('circle')
                 .attr('r', 3)
                 .attr('cy', d => vis.yScale(vis.config.dataFuncY(d)))
                 .attr('cx', d => vis.xScale(vis.config.dataFuncX(d)))
