@@ -60,6 +60,20 @@ class Scatterplot {
             .attr('y', 0)
             .attr('dy', '.71em')
             .text(vis.config.axisTitleY);
+
+        vis.brushG = vis.svg.append('g')
+            .attr('class', 'brush')
+
+        vis.brush = d3.brush()
+            // .extent([[0, 0], [vis.config.width, vis.config.height]])
+            .on('start brush end', function({selection}) {
+                // if (selection) vis.brushed(selection);
+            });
+
+        // vis.chart.call(vis.brush = d3.brush()
+        //     .on('start brush end', function({selection}) {
+        //         // if (selection) vis.brushed(selection);
+        //     }));
     }
 
     updateVis() {
@@ -123,5 +137,7 @@ class Scatterplot {
 
         vis.yAxisG
             .call(vis.yAxis)
+
+        vis.brushG.call(vis.brush);
     }
 }
