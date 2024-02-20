@@ -104,11 +104,12 @@ class ChoroplethMap {
           .join('path')
             .attr('class', 'county')
             .attr('d', vis.geoPath)
-            .attr('fill', d => {
+            .style('fill', d => {
               if (d.properties.county_data && vis.config.geoDataFunc(d) >= 0) {
                 return vis.colorScale(vis.config.geoDataFunc(d));
               } else {
-                console.log("Returning lightstripe")
+                console.log(d.properties);
+                // return 'black';
                 return 'url(#lightstripe)';
               }
             });
