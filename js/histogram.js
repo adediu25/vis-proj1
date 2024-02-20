@@ -8,6 +8,7 @@ class Histogram {
           containerWidth: _config.containerWidth || 700,
           containerHeight: _config.containerHeight || 500,
           margin: _config.margin || {top: 5, right: 5, bottom: 20, left: 50},
+          tooltipPadding: _config.tooltipPadding || 10,
           dataFunc: _config.dataFunc || function(d){return d.median_household_income;},
           axisTitle: _config.axisTitle || "Median Household Income (USD)"
         }
@@ -78,7 +79,7 @@ class Histogram {
     renderVis(){
         let vis = this;
 
-        vis.chart.selectAll('.bar')
+        const bars = vis.chart.selectAll('.bar')
             .data(vis.bins)
         .join('rect')
             .attr('class', 'bar')
@@ -87,6 +88,21 @@ class Histogram {
             .attr('y', d => vis.yScale(d.length))
             .attr('x', d => vis.xScale(d.x0) + 1)
             .attr('fill', 'steelblue');
+
+        bars
+            .on('mousemove', (event,d) => {
+                d3.select('#tooltip')
+                .style('display', 'block')
+                .style('left', (event.pageX + vis.config.tooltipPadding) + 'px')   
+                .style('top', (event.pageY + vis.config.tooltipPadding) + 'px')
+                .html(`
+                    <div class="tooltip-title">${vis.config.axisTitle} Range: ${d.x0} - ${d.x1}</div>
+                    <div><i>Number of counties: ${d.length}</i></div>
+                `);
+            })
+            .on('mouseleave', () => {
+                d3.select('#tooltip').style('display', 'none');
+            });
         
         vis.xAxisG.call(vis.xAxis);
         vis.yAxisG.call(vis.yAxis);

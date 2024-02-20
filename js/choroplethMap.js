@@ -114,21 +114,22 @@ class ChoroplethMap {
               }
             });
     
-        // countyPath
-        //     .on('mousemove', (event,d) => {
-        //       const popDensity = d.properties.pop_density ? `<strong>${d.properties.pop_density}</strong> pop. density per km<sup>2</sup>` : 'No data available'; 
-        //       d3.select('#tooltip')
-        //         .style('display', 'block')
-        //         .style('left', (event.pageX + vis.config.tooltipPadding) + 'px')   
-        //         .style('top', (event.pageY + vis.config.tooltipPadding) + 'px')
-        //         .html(`
-        //           <div class="tooltip-title">${d.properties.name}</div>
-        //           <div>${popDensity}</div>
-        //         `);
-        //     })
-        //     .on('mouseleave', () => {
-        //       d3.select('#tooltip').style('display', 'none');
-        //     });
+        countyPath
+            .on('mousemove', (event,d) => {
+              const dataValue = vis.config.geoDataFunc(d) >= 0 ? `<strong>${vis.config.geoDataFunc(d)}` : 'No data available'; 
+              d3.select('#tooltip')
+                .style('display', 'block')
+                .style('left', (event.pageX + vis.config.tooltipPadding) + 'px')   
+                .style('top', (event.pageY + vis.config.tooltipPadding) + 'px')
+                .html(`
+                  <div class="tooltip-title">${d.properties.county_data.display_name}</div>
+                  <div>${d.properties.county_data.urban_rural_status}</div>
+                  <div>${vis.config.axisTitle}: ${dataValue}</div>
+                `);
+            })
+            .on('mouseleave', () => {
+              d3.select('#tooltip').style('display', 'none');
+            });
     
         // Add legend labels
         vis.legend.selectAll('.legend-label')

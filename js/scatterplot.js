@@ -5,6 +5,7 @@ class Scatterplot {
             containerWidth: _config.containerWidth || 700,
             containerHeight: _config.containerHeight || 500,
             margin: _config.margin || {top: 30, right: 20, bottom: 20, left: 35},
+            tooltipPadding: _config.tooltipPadding || 10,
             dataFuncX: _config.dataFuncX || function(d){return d.median_household_income;},
             dataFuncY: _config.dataFuncY || function(d){return d.park_access;},
             axisTitleX: _config.axisTitleX || "Median Household Income (USD)",
@@ -89,7 +90,7 @@ class Scatterplot {
             .attr('dy', '.71em')
             .text(vis.config.axisTitleY);
 
-        vis.chart.selectAll('circle')
+        const circles = vis.chart.selectAll('circle')
                 // filter out data not collected
                 .data(vis.data.filter(d => vis.config.dataFuncX(d) >= 0 && vis.config.dataFuncY(d) >= 0))
             .join('circle')
@@ -97,6 +98,25 @@ class Scatterplot {
                 .attr('cy', d => vis.yScale(vis.config.dataFuncY(d)))
                 .attr('cx', d => vis.xScale(vis.config.dataFuncX(d)))
                 .attr('fill', 'steelblue');
+
+        circles
+            .on('mouseover', (event,d) => {
+                d3.select('#tooltip')
+                .style('display', 'block')
+                .style('left', (event.pageX + vis.config.tooltipPadding) + 'px')   
+                .style('top', (event.pageY + vis.config.tooltipPadding) + 'px')
+                .html(`
+                    <div class="tooltip-title">${d.display_name}</div>
+                    <div><i>${d.urban_rural_status}</i></div>
+                    <ul>
+                    <li>${vis.config.axisTitleX}: ${vis.config.dataFuncX(d)}</li>
+                    <li>${vis.config.axisTitleY}: ${vis.config.dataFuncY(d)}</li>
+                    </ul>
+                `);
+            })
+            .on('mouseleave', () => {
+                d3.select('#tooltip').style('display', 'none');
+            });
    
         vis.xAxisG
             .call(vis.xAxis)
