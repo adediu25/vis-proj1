@@ -35,6 +35,9 @@ class Scatterplot {
         vis.xAxis = d3.axisBottom(vis.xScale);
 
         vis.yAxis = d3.axisLeft(vis.yScale);
+
+        vis.brushG = vis.svg.append('g')
+            .attr('class', 'brush');
         
         vis.chart = vis.svg.append('g')
             .attr('transform', `translate(${vis.config.margin.left},${vis.config.margin.top})`);
@@ -61,12 +64,10 @@ class Scatterplot {
             .attr('dy', '.71em')
             .text(vis.config.axisTitleY);
 
-        vis.brushG = vis.svg.append('g')
-            .attr('class', 'brush')
-
         vis.brush = d3.brush()
             // .extent([[0, 0], [vis.config.width, vis.config.height]])
             .on('start brush end', function({selection}) {
+                console.log('brush handled')
                 // if (selection) vis.brushed(selection);
             });
 
@@ -113,8 +114,11 @@ class Scatterplot {
                 .attr('cx', d => vis.xScale(vis.config.dataFuncX(d)))
                 .attr('fill', 'steelblue');
 
+
+        // vis.brushG.call(vis.brush);
+
         circles
-            .on('mouseover', (event,d) => {
+            .on('mousemove', (event,d) => {
                 d3.select('#tooltip')
                 .style('display', 'block')
                 .style('left', (event.pageX + vis.config.tooltipPadding) + 'px')   
@@ -130,6 +134,20 @@ class Scatterplot {
             })
             .on('mouseleave', () => {
                 d3.select('#tooltip').style('display', 'none');
+            })
+            .on('mousedown', (event, d) => {
+                let brush_element = vis.svg.select('.overlay').node();
+                let new_event = new MouseEvent('mousedown', {
+                    bubbles: true,
+                    cancelable: true,
+                    view: window,
+                    pageX: event.pageX,
+                    pageY: event.pageY,
+                    clientX: event.clientX,
+                    clientY: event.clientY
+                })
+                console.log(new_event.type);
+                brush_element.dispatchEvent(new_event);
             });
    
         vis.xAxisG
@@ -139,5 +157,6 @@ class Scatterplot {
             .call(vis.yAxis)
 
         vis.brushG.call(vis.brush);
+        
     }
 }

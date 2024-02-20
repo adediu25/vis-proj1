@@ -29,6 +29,9 @@ class ChoroplethMap {
             .attr('width', vis.config.containerWidth)
             .attr('height', vis.config.containerHeight);
 
+        vis.brushG = vis.svg.append('g')
+            .attr('class', 'brush');
+
         // Append group element that will contain our actual chart 
         // and position it according to the given margin config
         vis.chart = vis.svg.append('g')
@@ -66,6 +69,13 @@ class ChoroplethMap {
           .datum(topojson.mesh(vis.data, vis.data.objects.states, function(a,b){return a !== b;}))
           .attr("id", "state-borders")
           .attr('d', vis.geoPath);
+
+        vis.brush = d3.brush()
+          // .extent([[0, 0], [vis.config.width, vis.config.height]])
+          .on('start brush end', function({selection}) {
+              console.log('brush handled')
+              // if (selection) vis.brushed(selection);
+          });
 
         vis.updateVis();
     }
@@ -129,7 +139,21 @@ class ChoroplethMap {
             })
             .on('mouseleave', () => {
               d3.select('#tooltip').style('display', 'none');
-            });
+            })
+            .on('mousedown', (event, d) => {
+              let brush_element = vis.svg.select('.overlay').node();
+              let new_event = new MouseEvent('mousedown', {
+                  bubbles: true,
+                  cancelable: true,
+                  view: window,
+                  pageX: event.pageX,
+                  pageY: event.pageY,
+                  clientX: event.clientX,
+                  clientY: event.clientY
+              })
+              console.log(new_event.type);
+              brush_element.dispatchEvent(new_event);
+          });
     
         // Add legend labels
         vis.legend.selectAll('.legend-label')
@@ -158,6 +182,8 @@ class ChoroplethMap {
             .attr('class', 'legend-title')
             .attr('dy', '.35em')
             .attr('y', -10)
-            .text(vis.config.axisTitle)
+            .text(vis.config.axisTitle);
+
+        vis.brushG.call(vis.brush);
       }
 }
