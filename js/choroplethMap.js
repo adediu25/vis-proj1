@@ -68,7 +68,8 @@ class ChoroplethMap {
         vis.chart.append('path')
           .datum(topojson.mesh(vis.data, vis.data.objects.states, function(a,b){return a !== b;}))
           .attr("id", "state-borders")
-          .attr('d', vis.geoPath);
+          .attr('d', vis.geoPath)
+          .attr('transform', `translate(${vis.config.margin.left},${vis.config.margin.top})`);
 
         vis.brush = d3.brush()
           // .extent([[0, 0], [vis.config.width, vis.config.height]])
@@ -136,6 +137,20 @@ class ChoroplethMap {
                   <div>${d.properties.county_data.urban_rural_status}</div>
                   <div>${vis.config.axisTitle}: ${dataValue}</div>
                 `);
+
+              // pass the same event down to brush to allow panning
+              let brush_element = vis.svg.select('.overlay').node();
+              let new_event = new MouseEvent('mousemove', {
+                  bubbles: true,
+                  cancelable: true,
+                  view: window,
+                  pageX: event.pageX,
+                  pageY: event.pageY,
+                  clientX: event.clientX,
+                  clientY: event.clientY
+              })
+              console.log(new_event.type);
+              brush_element.dispatchEvent(new_event);
             })
             .on('mouseleave', () => {
               d3.select('#tooltip').style('display', 'none');
@@ -183,6 +198,13 @@ class ChoroplethMap {
             .attr('dy', '.35em')
             .attr('y', -10)
             .text(vis.config.axisTitle);
+
+        vis.chart.selectAll('#state-borders')
+            .datum(topojson.mesh(vis.data, vis.data.objects.states, function(a,b){return a !== b;}))
+            .join()
+            .attr("id", "state-borders")
+            .attr('d', vis.geoPath)
+            .attr('transform', `translate(${vis.config.margin.left},${vis.config.margin.top})`);
 
         vis.brushG.call(vis.brush);
       }
