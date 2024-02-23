@@ -1,5 +1,5 @@
 // global objects
-let histogram1, histogram2, choroplethMap1, choroplethMap2, scatterplot;
+let histogram1, histogram2, urbanHistogram, choroplethMap1, choroplethMap2, scatterplot;
 
 Promise.all([
     d3.json('data/usa_counties.json'),
@@ -66,6 +66,19 @@ Promise.all([
             axisTitle: "Park Access"
         }, countyData);
         histogram2.updateVis();
+        
+        histogram3 = new Histogram({
+            parentElement: '#histogram3',
+            dataFunc: function(d) {return d.urban_rural_status;},
+            axisTitle: "Park Access"
+        }, countyData);
+        histogram3.updateVis();
+
+        // urbanHistogram = new Histogram({
+        //     parentElement: '#urbanhistogram'
+        //     // dataFunc: function(d) {return d.urban_rural_status;}
+        // }, countyData);
+        // urbanHistogram.updateVis();
     })
     .catch(error => {
         console.error('Error:');
@@ -74,13 +87,11 @@ Promise.all([
 
 // event handler for first attribute dropdown
 d3.select("#dataX").on("input", function(){
-    console.log(getDataFunc(this.value));
     chooseX(getDataFunc(this.value), this.options[this.selectedIndex].innerHTML);
 });
 
 // event handler for second attribute dropdown
 d3.select("#dataY").on("input", function(){
-    console.log(getDataFunc(this.value));
     chooseY(getDataFunc(this.value), this.options[this.selectedIndex].innerHTML);
 });
 

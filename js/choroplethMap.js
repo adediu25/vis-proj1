@@ -29,16 +29,19 @@ class ChoroplethMap {
             .attr('width', vis.config.containerWidth)
             .attr('height', vis.config.containerHeight);
 
-        vis.brushG = vis.svg.append('g')
-            .attr('class', 'brush');
+        // vis.brushG = vis.svg.append('g')
+        //     .attr('class', 'brush');
 
         // Append group element that will contain our actual chart 
         // and position it according to the given margin config
         vis.chart = vis.svg.append('g')
             .attr('transform', `translate(${vis.config.margin.left},${vis.config.margin.top})`);
+        
+        vis.brushG = vis.chart.append('g')
+            .attr('class', 'brush');
 
         // Initialize projection and path generator
-        vis.projection = d3.geoAlbersUsa();
+        vis.projection = d3.geoAlbersUsa().translate([vis.width / 2, vis.height/2]);
         vis.geoPath = d3.geoPath().projection(vis.projection);
 
         vis.colorScale = d3.scaleLinear()
@@ -72,11 +75,14 @@ class ChoroplethMap {
           .attr('transform', `translate(${vis.config.margin.left},${vis.config.margin.top})`);
 
         vis.brush = d3.brush()
-          // .extent([[0, 0], [vis.config.width, vis.config.height]])
-          .on('start brush end', function({selection}) {
-              console.log('brush handled')
-              // if (selection) vis.brushed(selection);
-          });
+          .extent([[0, 0], [vis.width, vis.height]]);
+
+        vis.svg.append('path')
+          .datum(topojson.mesh(vis.data, vis.data.objects.states, function(a,b){return a !== b;}))
+          .attr("id", "state-borders")
+          .attr('d', vis.geoPath)
+          .attr('transform', `translate(${vis.config.margin.left},${vis.config.margin.top})`);
+
 
         vis.updateVis();
     }
@@ -108,7 +114,7 @@ class ChoroplethMap {
   
         // Defines the scale of the projection so that the geometry fits within the SVG area
         vis.projection.fitSize([vis.width, vis.height], counties);
-    
+
         // Append world map
         const countyPath = vis.chart.selectAll('.county')
             .data(counties.features)
@@ -119,8 +125,6 @@ class ChoroplethMap {
               if (d.properties.county_data && vis.config.geoDataFunc(d) >= 0) {
                 return vis.colorScale(vis.config.geoDataFunc(d));
               } else {
-                console.log(d.properties);
-                // return 'black';
                 return 'url(#lightstripe)';
               }
             });
@@ -149,7 +153,6 @@ class ChoroplethMap {
                   clientX: event.clientX,
                   clientY: event.clientY
               })
-              console.log(new_event.type);
               brush_element.dispatchEvent(new_event);
             })
             .on('mouseleave', () => {
@@ -166,7 +169,6 @@ class ChoroplethMap {
                   clientX: event.clientX,
                   clientY: event.clientY
               })
-              console.log(new_event.type);
               brush_element.dispatchEvent(new_event);
           });
     
@@ -199,13 +201,46 @@ class ChoroplethMap {
             .attr('y', -10)
             .text(vis.config.axisTitle);
 
-        vis.chart.selectAll('#state-borders')
-            .datum(topojson.mesh(vis.data, vis.data.objects.states, function(a,b){return a !== b;}))
-            .join()
-            .attr("id", "state-borders")
-            .attr('d', vis.geoPath)
-            .attr('transform', `translate(${vis.config.margin.left},${vis.config.margin.top})`);
+        ///
+        ///not really working look into it
+        //
+        // vis.chart.selectAll('#state-borders')
+        //     .datum(topojson.mesh(vis.data, vis.data.objects.states, function(a,b){return a !== b;}))
+        //     .join()
+        //     .attr("id", "state-borders")
+        //     .attr('d', vis.geoPath)
+        //     .attr('transform', `translate(${vis.config.margin.left},${vis.config.margin.top})`);
 
-        vis.brushG.call(vis.brush);
+        //revisit have to get based on geoData now
+        vis.brushG.call(vis.brush.on('end', function({selection}) {
+          let value = [];
+          if (selection){
+              const [[x0, y0], [x1, y1]] = selection;
+              value = countyPath
+              .style("fill", "gray")
+              // figure out this filter
+              .filter(d => {
+                const [[countyX0, countyY0],[countyX1, countyY1]] = vis.geoPath.bounds(d);
+                return countyX1 >= x0-1 && countyX0 <= x1+1 && countyY1 >= y0-1 && countyY0 <= y1+1;
+              })
+              .style("fill", d => {
+                if (d.properties.county_data && vis.config.geoDataFunc(d) >= 0) {
+                  return vis.colorScale(vis.config.geoDataFunc(d));
+                } else {
+                  return 'url(#lightstripe)';
+                }
+              })
+              .data();
+          } else {
+              countyPath.style("fill", d => {
+                if (d.properties.county_data && vis.config.geoDataFunc(d) >= 0) {
+                  return vis.colorScale(vis.config.geoDataFunc(d));
+                } else {
+                  return 'url(#lightstripe)';
+                }
+              });
+          }
+          }
+        ));
       }
 }

@@ -1,4 +1,4 @@
-class Histogram {
+class BarChart {
     constructor(_config, _data) {
         // Configuration object with defaults
         // Important: depending on your vis and the type of interactivity you need
@@ -9,8 +9,7 @@ class Histogram {
           containerHeight: _config.containerHeight || 500,
           margin: _config.margin || {top: 5, right: 5, bottom: 20, left: 50},
           tooltipPadding: _config.tooltipPadding || 10,
-          dataFunc: _config.dataFunc || function(d){return d.median_household_income;},
-          axisTitle: _config.axisTitle || "Median Household Income (USD)"
+          dataFunc: _config.dataFunc || function(d){return d.median_household_income;}
         }
         this.data = _data;
         this.initVis();
@@ -45,8 +44,9 @@ class Histogram {
     
 
         // Initialize scales
-        vis.xScale = d3.scaleLinear()
-            .range([0, vis.width]);
+        vis.xScale = d3.scaleBand()
+            .range([0, vis.width])
+            .paddingInner(0.1);
 
         vis.yScale = d3.scaleLinear()
             .range([vis.height, 0]);
@@ -71,21 +71,25 @@ class Histogram {
 
     updateVis() {
         let vis = this;
+        
+        vis.bars = [
+            {
+                
+            },
+            {
 
+            },
+            {
 
-        vis.hist = d3.bin()
-            .value(vis.config.dataFunc)
-            .thresholds(20);
-            
+            },
+            {
 
-        vis.bins = vis.hist(vis.data.filter(d => vis.config.dataFunc(d) >= 0));
+            }
+        ]
 
-        // vis.xScale.domain([0, d3.max(vis.data, d => d.median_household_income)]);
-        // vis.yScale.domain([0, d3.max(vis.bins, d => d.length)]);
-        vis.xScale.domain([vis.bins[0].x0, vis.bins[vis.bins.length-1].x1]);
-        vis.yScale.domain([0, d3.max(vis.bins, d => d.length)]);
-
-        console.log('about to render histogram')
+        vis.xScale.domain(vis.data.map(vis.xValue));
+        vis.yScale.domain([0, d3.max(vis.data, vis.yValue)]);
+        
         vis.renderVis();
     }
 

@@ -36,11 +36,14 @@ class Scatterplot {
 
         vis.yAxis = d3.axisLeft(vis.yScale);
 
-        vis.brushG = vis.svg.append('g')
-            .attr('class', 'brush');
+        // vis.brushG = vis.svg.append('g')
+        //     .attr('class', 'brush');
         
         vis.chart = vis.svg.append('g')
             .attr('transform', `translate(${vis.config.margin.left},${vis.config.margin.top})`);
+
+        vis.brushG = vis.chart.append('g')
+            .attr('class', 'brush');
     
         vis.xAxisG = vis.chart.append('g')
             .attr('class', 'axis x-axis')
@@ -65,16 +68,7 @@ class Scatterplot {
             .text(vis.config.axisTitleY);
 
         vis.brush = d3.brush()
-            // .extent([[0, 0], [vis.config.width, vis.config.height]])
-            .on('start brush end', function({selection}) {
-                console.log('brush handled')
-                // if (selection) vis.brushed(selection);
-            });
-
-        // vis.chart.call(vis.brush = d3.brush()
-        //     .on('start brush end', function({selection}) {
-        //         // if (selection) vis.brushed(selection);
-        //     }));
+            .extent([[0, 0], [vis.width, vis.height]]);
     }
 
     updateVis() {
@@ -156,7 +150,21 @@ class Scatterplot {
         vis.yAxisG
             .call(vis.yAxis)
 
-        vis.brushG.call(vis.brush);
+        vis.brushG.call(vis.brush.on('brush end', function({selection}) {
+            let value = [];
+            if (selection){
+                const [[x0, y0], [x1, y1]] = selection;
+                value = circles
+                .style("fill", "gray")
+                .filter(d => x0 <= vis.xScale(vis.config.dataFuncX(d)) && vis.xScale(vis.config.dataFuncX(d)) <= x1
+                        && y0 <= vis.yScale(vis.config.dataFuncY(d)) && vis.yScale(vis.config.dataFuncY(d)) <= y1)
+                .style("fill", "steelblue")
+                .data();
+            } else {
+                circles.style("fill", "steelblue");
+            }
+            }
+        ));
         
     }
 }
