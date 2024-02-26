@@ -1,5 +1,5 @@
 // global objects
-let histogram1, histogram2, urbanHistogram, choroplethMap1, choroplethMap2, scatterplot;
+let histogram1, histogram2, urbanHistogram, choroplethMap1, choroplethMap2, urbanMap, scatterplot;
 
 Promise.all([
     d3.json('data/usa_counties.json'),
@@ -67,12 +67,14 @@ Promise.all([
         }, countyData);
         histogram2.updateVis();
         
-        histogram3 = new Histogram({
-            parentElement: '#histogram3',
-            dataFunc: function(d) {return d.urban_rural_status;},
-            axisTitle: "Park Access"
+        urbanHistogram = new BarChart({
+            parentElement: '#histogram3'
         }, countyData);
-        histogram3.updateVis();
+        urbanHistogram.updateVis();
+
+        urbanMap = new CategoricalChoroplethMap({
+            parentElement: '#map3'
+        }, geoData);
 
         // urbanHistogram = new Histogram({
         //     parentElement: '#urbanhistogram'

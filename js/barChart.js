@@ -9,7 +9,6 @@ class BarChart {
           containerHeight: _config.containerHeight || 500,
           margin: _config.margin || {top: 5, right: 5, bottom: 20, left: 50},
           tooltipPadding: _config.tooltipPadding || 10,
-          dataFunc: _config.dataFunc || function(d){return d.median_household_income;}
         }
         this.data = _data;
         this.initVis();
@@ -74,21 +73,25 @@ class BarChart {
         
         vis.bars = [
             {
-                
+                value: 'Urban',
+                count: vis.data.filter(d => d.urban_rural_status == 'Urban').length
             },
             {
-
+                value: 'Small City',
+                count: vis.data.filter(d => d.urban_rural_status == 'Small City').length
             },
             {
-
+                value: 'Suburban',
+                count: vis.data.filter(d => d.urban_rural_status == 'Suburban').length
             },
             {
-
+                value: 'Rural',
+                count: vis.data.filter(d => d.urban_rural_status == 'Rural').length
             }
         ]
 
-        vis.xScale.domain(vis.data.map(vis.xValue));
-        vis.yScale.domain([0, d3.max(vis.data, vis.yValue)]);
+        vis.xScale.domain(vis.bars.map(d => d.value));
+        vis.yScale.domain([0, d3.max(vis.bars, d => d.count)]);
         
         vis.renderVis();
     }
@@ -97,13 +100,13 @@ class BarChart {
         let vis = this;
 
         const bars = vis.chart.selectAll('.bar')
-            .data(vis.bins)
+            .data(vis.bars)
         .join('rect')
             .attr('class', 'bar')
-            .attr('width', d => vis.xScale(d.x1) - vis.xScale(d.x0) - 1)
-            .attr('height', d => vis.yScale(0) - vis.yScale(d.length))
-            .attr('y', d => vis.yScale(d.length))
-            .attr('x', d => vis.xScale(d.x0) + 1)
+            .attr('width', vis.xScale.bandwidth())
+            .attr('height', d => vis.yScale(0) - vis.yScale(d.count))
+            .attr('y', d => vis.yScale(d.count))
+            .attr('x', d => vis.xScale(d.value))
             .attr('fill', 'steelblue');
 
         bars
@@ -113,8 +116,8 @@ class BarChart {
                 .style('left', (event.pageX + vis.config.tooltipPadding) + 'px')   
                 .style('top', (event.pageY + vis.config.tooltipPadding) + 'px')
                 .html(`
-                    <div class="tooltip-title">${vis.config.axisTitle} Range: ${d.x0} - ${d.x1}</div>
-                    <div><i>Number of counties: ${d.length}</i></div>
+                    <div class="tooltip-title">${d.value}</div>
+                    <div><i>Number of counties: ${d.count}</i></div>
                 `);
             })
             .on('mouseleave', () => {
@@ -143,7 +146,7 @@ class BarChart {
                 const [x0, x1] = selection;
                 value = bars
                 .style("fill", "gray")
-                .filter(d => x0 <= vis.xScale(d.x1) && vis.xScale(d.x0) < x1)
+                .filter(d => x0 <= vis.xScale(d.value) + vis.xScale.bandwidth() && vis.xScale(d.value) < x1)
                 .style("fill", "steelblue")
                 .data();
             } else {
