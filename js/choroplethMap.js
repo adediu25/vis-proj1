@@ -14,6 +14,7 @@ class ChoroplethMap {
           axisTitle: _config.axisTitle || "Median Household Income (USD)"
         }
         this.data = _data;
+        this.resettingBrush = false;
         this.initVis();
       }
   
@@ -241,6 +242,20 @@ class ChoroplethMap {
               });
           }
           }
-        ));
+        ).on('start', function() {
+          console.log('started')
+          if (!vis.resettingBrush){
+            d3.select(vis.config.parentElement)
+                .node()
+                .dispatchEvent(new CustomEvent('selection', {}));
+          }
+        }));
       }
+
+      resetBrush(){
+        let vis = this;
+        vis.resettingBrush = true;
+        vis.brushG.call(vis.brush.clear);
+        vis.resettingBrush = false;
+    }
 }

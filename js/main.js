@@ -1,5 +1,5 @@
 // global objects
-let histogram1, histogram2, urbanHistogram, choroplethMap1, choroplethMap2, urbanMap, scatterplot;
+let histogram1, histogram2, urbanHistogram, choroplethMap1, choroplethMap2, urbanMap, scatterplot, visList;
 
 Promise.all([
     d3.json('data/usa_counties.json'),
@@ -76,11 +76,8 @@ Promise.all([
             parentElement: '#map3'
         }, geoData);
 
-        // urbanHistogram = new Histogram({
-        //     parentElement: '#urbanhistogram'
-        //     // dataFunc: function(d) {return d.urban_rural_status;}
-        // }, countyData);
-        // urbanHistogram.updateVis();
+        visList = [histogram1, histogram2, urbanHistogram, choroplethMap1, choroplethMap2, urbanMap, scatterplot];
+
     })
     .catch(error => {
         console.error('Error:');
@@ -93,9 +90,14 @@ d3.select("#dataX").on("input", function(){
 });
 
 // event handler for second attribute dropdown
-d3.select("#dataY").on("input", function(){
-    chooseY(getDataFunc(this.value), this.options[this.selectedIndex].innerHTML);
-});
+d3.select("#dataY").on("input", function(){chooseY(getDataFunc(this.value), this.options[this.selectedIndex].innerHTML);});
+
+// listen for a custom event from html elements which contain the visualizations
+// event is triggered by a brush start 
+// then call for brush to be reset on every other visualization
+d3.selectAll('.parent').on('selection', function(event){
+    visList.filter(d => d.config.parentElement != event.srcElement.id).forEach(function(d) {d.resetBrush();});
+})
 
 // returns anon function which will be given to each construct
 // to specify which attribute to pull from data and graph

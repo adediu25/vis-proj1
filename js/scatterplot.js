@@ -12,6 +12,7 @@ class Scatterplot {
             axisTitleY: _config.axisTitleY || "Park Access"
         }
         this.data = _data;
+        this.resettingBrush = false;
         this.initVis();
     }
 
@@ -164,7 +165,21 @@ class Scatterplot {
                 circles.style("fill", "steelblue");
             }
             }
-        ));
+        ).on('start', function() {
+            console.log('started')
+            if (!vis.resettingBrush){
+                d3.select(vis.config.parentElement)
+                    .node()
+                    .dispatchEvent(new CustomEvent('selection', {}));
+            }
+        }));
         
+    }
+
+    resetBrush(){
+        let vis = this;
+        vis.resettingBrush = true;
+        vis.brushG.call(vis.brush.clear);
+        vis.resettingBrush = false;
     }
 }

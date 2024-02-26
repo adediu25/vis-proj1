@@ -13,6 +13,7 @@ class Histogram {
           axisTitle: _config.axisTitle || "Median Household Income (USD)"
         }
         this.data = _data;
+        this.resettingBrush = false;
         this.initVis();
       }
 
@@ -145,7 +146,28 @@ class Histogram {
             } else {
                 bars.style("fill", "steelblue");
             }
+
+            if(!vis.resettingBrush){
+                // here we can add an event to return data to other vis
             }
-        ));
+
+            }
+        )
+        .on('start', function() {
+            if (!vis.resettingBrush){
+                d3.select(vis.config.parentElement)
+                    .node()
+                    .dispatchEvent(new CustomEvent('selection', {detail:{
+
+                    }}));
+            }
+        }));
+    }
+
+    resetBrush(){
+        let vis = this;
+        vis.resettingBrush = true;
+        vis.brushG.call(vis.brush.clear);
+        vis.resettingBrush = false;
     }
 }
