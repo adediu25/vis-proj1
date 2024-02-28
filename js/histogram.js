@@ -88,7 +88,6 @@ class Histogram {
         vis.xScale.domain([vis.bins[0].x0, vis.bins[vis.bins.length-1].x1]);
         vis.yScale.domain([0, d3.max(vis.bins, d => d.length)]);
 
-        console.log('about to render histogram')
         vis.renderVis();
     }
 
@@ -161,8 +160,6 @@ class Histogram {
                     }
                 });
 
-                console.log(filteredData.length);
-
                 d3.select(vis.config.parentElement)
                     .node()
                     .dispatchEvent(new CustomEvent('brush-selection', {detail:{
@@ -176,8 +173,8 @@ class Histogram {
 
         // })
         .on('start', function() {
-            vis.updateVis();
             if (!vis.resettingBrush){
+                vis.updateVis();
                 d3.select(vis.config.parentElement)
                     .node()
                     .dispatchEvent(new CustomEvent('brush-start', {detail:{

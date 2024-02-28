@@ -12,7 +12,9 @@ class CategoricalChoroplethMap {
           legendRectWidth: 150
         }
         this.data = _data;
+        this.filteredData;
         this.resettingBrush = false;
+        this.updatingFromBrush = false;
         this.initVis();
       }
   
@@ -112,7 +114,9 @@ class CategoricalChoroplethMap {
     renderVis() {
         let vis = this;
         // Convert compressed TopoJSON to GeoJSON format
-        const counties = topojson.feature(vis.data, vis.data.objects.counties)
+        const counties = topojson.feature(vis.data, vis.data.objects.counties);
+
+        const filteredSet = new Set(vis.filteredData);
   
         // Defines the scale of the projection so that the geometry fits within the SVG area
         vis.projection.fitSize([vis.width, vis.height], counties);
@@ -124,7 +128,10 @@ class CategoricalChoroplethMap {
             .attr('class', 'county')
             .attr('d', vis.geoPath)
             .style('fill', d => {
-              if (d.properties.county_data) {
+              if (vis.updatingFromBrush && !filteredSet.has(d.properties.county_data)){
+                return 'lightgray';
+              }
+              else if (d.properties.county_data) {
                 return vis.colorScale(d.properties.county_data.urban_rural_status);
               } else {
                 return 'url(#lightstripe)';
@@ -216,6 +223,7 @@ class CategoricalChoroplethMap {
 
         //revisit have to get based on geoData now
         vis.brushG.call(vis.brush.on('end', function({selection}) {
+          let filteredData = [];
           let value = [];
           if (selection){
               const [[x0, y0], [x1, y1]] = selection;
@@ -224,7 +232,14 @@ class CategoricalChoroplethMap {
               // figure out this filter
               .filter(d => {
                 const [[countyX0, countyY0],[countyX1, countyY1]] = vis.geoPath.bounds(d);
-                return countyX1 >= x0-1 && countyX0 <= x1+1 && countyY1 >= y0-1 && countyY0 <= y1+1;
+                if (countyX1 >= x0-1 && countyX0 <= x1+1 && countyY1 >= y0-1 && countyY0 <= y1+1){
+                  filteredData.push(d.properties.county_data);
+                  return true;
+                }
+                else{
+                  return false;
+                }
+                // return countyX1 >= x0-1 && countyX0 <= x1+1 && countyY1 >= y0-1 && countyY0 <= y1+1;
               })
               .style("fill", d => {
                 if (d.properties.county_data) {
@@ -234,6 +249,14 @@ class CategoricalChoroplethMap {
                 }
               })
               .data();
+
+              if (!vis.resettingBrush){
+                d3.select(vis.config.parentElement)
+                  .node()
+                  .dispatchEvent(new CustomEvent('brush-selection', {detail:{
+                      brushedData: filteredData
+                  }}))
+              }
           } else {
               countyPath.style("fill", d => {
                 if (d.properties.county_data) {
@@ -259,5 +282,14 @@ class CategoricalChoroplethMap {
         vis.resettingBrush = true;
         vis.brushG.call(vis.brush.clear);
         vis.resettingBrush = false;
+    }
+
+    updateFromBrush(brushedData){
+      let vis = this;
+
+      vis.updatingFromBrush = true;
+      vis.filteredData = brushedData;
+      vis.updateVis();
+      vis.updatingFromBrush = false;
     }
 }

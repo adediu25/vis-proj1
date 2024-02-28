@@ -14,7 +14,9 @@ class ChoroplethMap {
           axisTitle: _config.axisTitle || "Median Household Income (USD)"
         }
         this.data = _data;
+        this.filteredData;
         this.resettingBrush = false;
+        this.updatingFromBrush = false;
         this.initVis();
       }
   
@@ -113,6 +115,8 @@ class ChoroplethMap {
         // Convert compressed TopoJSON to GeoJSON format
         const counties = topojson.feature(vis.data, vis.data.objects.counties)
   
+        const filteredSet = new Set(vis.filteredData);
+
         // Defines the scale of the projection so that the geometry fits within the SVG area
         vis.projection.fitSize([vis.width, vis.height], counties);
 
@@ -123,7 +127,10 @@ class ChoroplethMap {
             .attr('class', 'county')
             .attr('d', vis.geoPath)
             .style('fill', d => {
-              if (d.properties.county_data && vis.config.geoDataFunc(d) >= 0) {
+              if (vis.updatingFromBrush && !filteredSet.has(d.properties.county_data)){
+                return 'lightgray';
+              }
+              else if (d.properties.county_data && vis.config.geoDataFunc(d) >= 0) {
                 return vis.colorScale(vis.config.geoDataFunc(d));
               } else {
                 return 'url(#lightstripe)';
@@ -214,6 +221,7 @@ class ChoroplethMap {
 
         //revisit have to get based on geoData now
         vis.brushG.call(vis.brush.on('end', function({selection}) {
+          let filteredData = [];
           let value = [];
           if (selection){
               const [[x0, y0], [x1, y1]] = selection;
@@ -222,7 +230,14 @@ class ChoroplethMap {
               // figure out this filter
               .filter(d => {
                 const [[countyX0, countyY0],[countyX1, countyY1]] = vis.geoPath.bounds(d);
-                return countyX1 >= x0-1 && countyX0 <= x1+1 && countyY1 >= y0-1 && countyY0 <= y1+1;
+                if (countyX1 >= x0-1 && countyX0 <= x1+1 && countyY1 >= y0-1 && countyY0 <= y1+1){
+                  filteredData.push(d.properties.county_data);
+                  return true;
+                }
+                else{
+                  return false;
+                }
+                // return countyX1 >= x0-1 && countyX0 <= x1+1 && countyY1 >= y0-1 && countyY0 <= y1+1;
               })
               .style("fill", d => {
                 if (d.properties.county_data && vis.config.geoDataFunc(d) >= 0) {
@@ -232,6 +247,14 @@ class ChoroplethMap {
                 }
               })
               .data();
+
+              if (!vis.resettingBrush){
+                d3.select(vis.config.parentElement)
+                  .node()
+                  .dispatchEvent(new CustomEvent('brush-selection', {detail:{
+                      brushedData: filteredData
+                  }}))
+              }
           } else {
               countyPath.style("fill", d => {
                 if (d.properties.county_data && vis.config.geoDataFunc(d) >= 0) {
@@ -241,9 +264,18 @@ class ChoroplethMap {
                 }
               });
           }
-          }
+
+          // if (!vis.resettingBrush && selection){
+          //   d3.select(vis.config.parentElement)
+          //     .node()
+          //     .dispatchEvent(new CustomEvent('brush-selection', {detail:{
+          //         brushedData: filteredData
+          //     }}))
+          // }
+
+        }
         ).on('start', function() {
-          console.log('started')
+          // console.log('started');
           if (!vis.resettingBrush){
             d3.select(vis.config.parentElement)
                 .node()
@@ -257,5 +289,14 @@ class ChoroplethMap {
         vis.resettingBrush = true;
         vis.brushG.call(vis.brush.clear);
         vis.resettingBrush = false;
+    }
+
+    updateFromBrush(brushedData){
+      let vis = this;
+
+      vis.updatingFromBrush = true;
+      vis.filteredData = brushedData;
+      vis.updateVis();
+      vis.updatingFromBrush = false;
     }
 }

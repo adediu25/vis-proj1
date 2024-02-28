@@ -110,25 +110,48 @@ d3.selectAll('.parent').on('brush-start', function(event){
 //     });
 // });
 
-d3.select('.parent').on('brush-selection', function(event){
-    // console.log(event.detail.brushedData);
-    histogram2.updateFromBrush(event.detail.brushedData);
-    scatterplot.updateFromBrush(event.detail.brushedData);
-    urbanHistogram.updateFromBrush(event.detail.brushedData);
-});
+// d3.select('.parent').on('brush-selection', function(event){
+//     // console.log(event.detail.brushedData);
+//     histogram2.updateFromBrush(event.detail.brushedData);
+//     scatterplot.updateFromBrush(event.detail.brushedData);
+//     urbanHistogram.updateFromBrush(event.detail.brushedData);
+//     choroplethMap1.updateFromBrush(event.detail.brushedData);
+//     choroplethMap2.updateFromBrush(event.detail.brushedData);
+//     urbanMap.updateFromBrush(event.detail.brushedData);
+// });
 
-d3.select('#scatterplot').on('brush-selection', function(event){
+// d3.select('#scatterplot').on('brush-selection', function(event){
+//     // console.log(event.detail.brushedData);
+//     histogram2.updateFromBrush(event.detail.brushedData);
+//     histogram1.updateFromBrush(event.detail.brushedData);
+//     urbanHistogram.updateFromBrush(event.detail.brushedData);
+// });
+
+// d3.select('#histogram3').on('brush-selection', function(event){
+//     // console.log(event.detail.brushedData);
+//     histogram2.updateFromBrush(event.detail.brushedData);
+//     histogram1.updateFromBrush(event.detail.brushedData);
+//     scatterplot.updateFromBrush(event.detail.brushedData);
+// });
+
+d3.select('#map1').on('brush-selection', function(event){
     // console.log(event.detail.brushedData);
     histogram2.updateFromBrush(event.detail.brushedData);
     histogram1.updateFromBrush(event.detail.brushedData);
+    scatterplot.updateFromBrush(event.detail.brushedData);
+    choroplethMap2.updateFromBrush(event.detail.brushedData);
+    urbanMap.updateFromBrush(event.detail.brushedData);
     urbanHistogram.updateFromBrush(event.detail.brushedData);
 });
 
-d3.select('#histogram3').on('brush-selection', function(event){
+d3.select('#map3').on('brush-selection', function(event){
     // console.log(event.detail.brushedData);
     histogram2.updateFromBrush(event.detail.brushedData);
     histogram1.updateFromBrush(event.detail.brushedData);
     scatterplot.updateFromBrush(event.detail.brushedData);
+    choroplethMap2.updateFromBrush(event.detail.brushedData);
+    choroplethMap1.updateFromBrush(event.detail.brushedData);
+    urbanHistogram.updateFromBrush(event.detail.brushedData);
 });
 
 // returns anon function which will be given to each construct
