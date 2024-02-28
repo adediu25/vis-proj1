@@ -86,18 +86,50 @@ Promise.all([
 
 // event handler for first attribute dropdown
 d3.select("#dataX").on("input", function(){
+    visList.forEach(function(d) {d.resetBrush();});
     chooseX(getDataFunc(this.value), this.options[this.selectedIndex].innerHTML);
 });
 
 // event handler for second attribute dropdown
-d3.select("#dataY").on("input", function(){chooseY(getDataFunc(this.value), this.options[this.selectedIndex].innerHTML);});
+d3.select("#dataY").on("input", function(){
+    visList.forEach(function(d) {d.resetBrush();});
+    chooseY(getDataFunc(this.value), this.options[this.selectedIndex].innerHTML);
+});
 
 // listen for a custom event from html elements which contain the visualizations
 // event is triggered by a brush start 
 // then call for brush to be reset on every other visualization
-d3.selectAll('.parent').on('selection', function(event){
+d3.selectAll('.parent').on('brush-start', function(event){
     visList.filter(d => d.config.parentElement != event.srcElement.id).forEach(function(d) {d.resetBrush();});
-})
+});
+
+// d3.selectAll('.parent').on('brush-start', function(event){
+//     visList.filter(d => 
+//         d.config.parentElement != event.srcElement.id).forEach(function(d) {
+//             d.resetBrush(event.detail.brushedData);
+//     });
+// });
+
+d3.select('.parent').on('brush-selection', function(event){
+    // console.log(event.detail.brushedData);
+    histogram2.updateFromBrush(event.detail.brushedData);
+    scatterplot.updateFromBrush(event.detail.brushedData);
+    urbanHistogram.updateFromBrush(event.detail.brushedData);
+});
+
+d3.select('#scatterplot').on('brush-selection', function(event){
+    // console.log(event.detail.brushedData);
+    histogram2.updateFromBrush(event.detail.brushedData);
+    histogram1.updateFromBrush(event.detail.brushedData);
+    urbanHistogram.updateFromBrush(event.detail.brushedData);
+});
+
+d3.select('#histogram3').on('brush-selection', function(event){
+    // console.log(event.detail.brushedData);
+    histogram2.updateFromBrush(event.detail.brushedData);
+    histogram1.updateFromBrush(event.detail.brushedData);
+    scatterplot.updateFromBrush(event.detail.brushedData);
+});
 
 // returns anon function which will be given to each construct
 // to specify which attribute to pull from data and graph

@@ -13,7 +13,9 @@ class Histogram {
           axisTitle: _config.axisTitle || "Median Household Income (USD)"
         }
         this.data = _data;
+        this.fullData = this.data;
         this.resettingBrush = false;
+        // this.filteredData = [];
         this.initVis();
       }
 
@@ -134,12 +136,12 @@ class Histogram {
         vis.xAxisG.call(vis.xAxis);
         vis.yAxisG.call(vis.yAxis);
 
-        vis.brushG.call(vis.brush.on('brush end', function({selection}) {
+        vis.brushG.call(vis.brush.on('end', function({selection}) {
             let value = [];
             if (selection){
                 const [x0, x1] = selection;
                 value = bars
-                .style("fill", "gray")
+                .style("fill", "lightgray")
                 .filter(d => x0 <= vis.xScale(d.x1) && vis.xScale(d.x0) < x1)
                 .style("fill", "steelblue")
                 .data();
@@ -147,17 +149,38 @@ class Histogram {
                 bars.style("fill", "steelblue");
             }
 
-            if(!vis.resettingBrush){
-                // here we can add an event to return data to other vis
+            if(!vis.resettingBrush && selection){
+                const [x0, x1] = selection;
+
+                let filteredData = [];
+
+                vis.bins.forEach(d => {
+                    if (x0 <= vis.xScale(d.x1) && vis.xScale(d.x0) < x1){
+                        d.forEach(county => filteredData.push(county));
+                        // filteredData.push(d);
+                    }
+                });
+
+                console.log(filteredData.length);
+
+                d3.select(vis.config.parentElement)
+                    .node()
+                    .dispatchEvent(new CustomEvent('brush-selection', {detail:{
+                        brushedData: filteredData
+                    }}))
             }
 
             }
         )
+        // .on('end', function({selection}) {
+
+        // })
         .on('start', function() {
+            vis.updateVis();
             if (!vis.resettingBrush){
                 d3.select(vis.config.parentElement)
                     .node()
-                    .dispatchEvent(new CustomEvent('selection', {detail:{
+                    .dispatchEvent(new CustomEvent('brush-start', {detail:{
 
                     }}));
             }
@@ -169,5 +192,13 @@ class Histogram {
         vis.resettingBrush = true;
         vis.brushG.call(vis.brush.clear);
         vis.resettingBrush = false;
+    }
+
+    updateFromBrush(brushedData){
+        let vis = this;
+
+        vis.data = brushedData;
+        vis.updateVis();
+        vis.data = vis.fullData;
     }
 }

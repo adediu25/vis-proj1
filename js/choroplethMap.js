@@ -218,7 +218,7 @@ class ChoroplethMap {
           if (selection){
               const [[x0, y0], [x1, y1]] = selection;
               value = countyPath
-              .style("fill", "gray")
+              .style("fill", "lightgray")
               // figure out this filter
               .filter(d => {
                 const [[countyX0, countyY0],[countyX1, countyY1]] = vis.geoPath.bounds(d);
@@ -247,7 +247,7 @@ class ChoroplethMap {
           if (!vis.resettingBrush){
             d3.select(vis.config.parentElement)
                 .node()
-                .dispatchEvent(new CustomEvent('selection', {}));
+                .dispatchEvent(new CustomEvent('brush-start', {}));
           }
         }));
       }

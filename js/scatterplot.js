@@ -12,7 +12,9 @@ class Scatterplot {
             axisTitleY: _config.axisTitleY || "Park Access"
         }
         this.data = _data;
+        this.filteredData;
         this.resettingBrush = false;
+        this.updatingFromBrush = false;
         this.initVis();
     }
 
@@ -100,14 +102,30 @@ class Scatterplot {
             .attr('dy', '.71em')
             .text(vis.config.axisTitleY);
 
-        const circles = vis.chart.selectAll('circle')
-                // filter out data not collected
-                .data(vis.data.filter(d => vis.config.dataFuncX(d) >= 0 && vis.config.dataFuncY(d) >= 0))
-            .join('circle')
-                .attr('r', 3)
-                .attr('cy', d => vis.yScale(vis.config.dataFuncY(d)))
-                .attr('cx', d => vis.xScale(vis.config.dataFuncX(d)))
-                .attr('fill', 'steelblue');
+
+        let circles;
+
+        circles = vis.chart.selectAll('circle')
+            // filter out data not collected
+            .data(vis.data.filter(d => vis.config.dataFuncX(d) >= 0 && vis.config.dataFuncY(d) >= 0))
+        .join('circle')
+            .attr('r', 3)
+            .attr('cy', d => vis.yScale(vis.config.dataFuncY(d)))
+            .attr('cx', d => vis.xScale(vis.config.dataFuncX(d)))
+            .attr('fill', 'steelblue');
+
+        //// NEED TO FIX THIS LOGIC
+        ////
+        if (vis.updatingFromBrush){
+            const [x0, x1] = d3.extent(vis.filteredData, vis.config.dataFuncX);
+            const [y0, y1] = d3.extent(vis.filteredData, vis.config.dataFuncY);
+            circles = vis.chart.selectAll('circle')
+                .data(vis.filteredData)
+                .join('circle')
+                .filter(d => x0 <= vis.config.dataFuncX(d) && vis.config.dataFuncX(d) <= x1
+                        && y0 <= vis.config.dataFuncY(d) && vis.config.dataFuncY(d) <= y1)
+                .style("fill", "steelblue")
+        }
 
 
         // vis.brushG.call(vis.brush);
@@ -156,7 +174,7 @@ class Scatterplot {
             if (selection){
                 const [[x0, y0], [x1, y1]] = selection;
                 value = circles
-                .style("fill", "gray")
+                .style("fill", "lightgray")
                 .filter(d => x0 <= vis.xScale(vis.config.dataFuncX(d)) && vis.xScale(vis.config.dataFuncX(d)) <= x1
                         && y0 <= vis.yScale(vis.config.dataFuncY(d)) && vis.yScale(vis.config.dataFuncY(d)) <= y1)
                 .style("fill", "steelblue")
@@ -164,13 +182,27 @@ class Scatterplot {
             } else {
                 circles.style("fill", "steelblue");
             }
+
+            
+            if(!vis.resettingBrush && selection){
+                const [[x0, y0], [x1, y1]] = selection;
+
+                let filteredData = vis.data.filter(d => x0 <= vis.xScale(vis.config.dataFuncX(d)) && vis.xScale(vis.config.dataFuncX(d)) <= x1
+                && y0 <= vis.yScale(vis.config.dataFuncY(d)) && vis.yScale(vis.config.dataFuncY(d)) <= y1);
+
+                d3.select(vis.config.parentElement)
+                    .node()
+                    .dispatchEvent(new CustomEvent('brush-selection', {detail:{
+                        brushedData: filteredData
+                    }}))
             }
+        }
         ).on('start', function() {
             console.log('started')
             if (!vis.resettingBrush){
                 d3.select(vis.config.parentElement)
                     .node()
-                    .dispatchEvent(new CustomEvent('selection', {}));
+                    .dispatchEvent(new CustomEvent('brush-start', {}));
             }
         }));
         
@@ -181,5 +213,14 @@ class Scatterplot {
         vis.resettingBrush = true;
         vis.brushG.call(vis.brush.clear);
         vis.resettingBrush = false;
+    }
+
+    updateFromBrush(brushedData){
+        let vis = this;
+
+        vis.updatingFromBrush = true;
+        vis.filteredData = brushedData;
+        vis.updateVis();
+        vis.updateingFromBrush = false;
     }
 }

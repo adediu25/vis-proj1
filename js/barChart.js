@@ -11,6 +11,7 @@ class BarChart {
           tooltipPadding: _config.tooltipPadding || 10,
         }
         this.data = _data;
+        this.fullData = this.data;
         this.resettingBrush = false;
         this.initVis();
       }
@@ -146,20 +147,33 @@ class BarChart {
             if (selection){
                 const [x0, x1] = selection;
                 value = bars
-                .style("fill", "gray")
+                .style("fill", "lightgray")
                 .filter(d => x0 <= vis.xScale(d.value) + vis.xScale.bandwidth() && vis.xScale(d.value) < x1)
                 .style("fill", "steelblue")
                 .data();
             } else {
                 bars.style("fill", "steelblue");
             }
+
+            if(!vis.resettingBrush && selection){
+                const [x0, x1] = selection;
+
+                let filteredData = vis.data.filter(d => x0 <= vis.xScale(d.urban_rural_status) + vis.xScale.bandwidth() && vis.xScale(d.urban_rural_status) < x1);
+
+                d3.select(vis.config.parentElement)
+                    .node()
+                    .dispatchEvent(new CustomEvent('brush-selection', {detail:{
+                        brushedData: filteredData
+                    }}))
             }
+        }
         ).on('start', function() {
             console.log('started');
+            // vis.updateVis();
             if (!vis.resettingBrush){
                 d3.select(vis.config.parentElement)
                     .node()
-                    .dispatchEvent(new CustomEvent('selection', {}));
+                    .dispatchEvent(new CustomEvent('brush-start', {}));
             }
         }));
     }
@@ -168,6 +182,15 @@ class BarChart {
         let vis = this;
         vis.resettingBrush = true;
         vis.brushG.call(vis.brush.clear);
+        vis.updateVis();
         vis.resettingBrush = false;
+    }
+
+    updateFromBrush(brushedData){
+        let vis = this;
+
+        vis.data = brushedData;
+        vis.updateVis();
+        vis.data = vis.fullData;
     }
 }
