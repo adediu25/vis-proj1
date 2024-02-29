@@ -2,8 +2,8 @@ class ChoroplethMap {
     constructor(_config, _data) {
         this.config = {
           parentElement: _config.parentElement,
-          containerWidth: _config.containerWidth || 700,
-          containerHeight: _config.containerHeight || 600,
+          containerWidth: _config.containerWidth || 550,
+          containerHeight: _config.containerHeight || 450,
           margin: _config.margin || {top: 0, right: 0, bottom: 0, left: 0},
           tooltipPadding: 10,
           legendBottom: 50,
@@ -80,11 +80,11 @@ class ChoroplethMap {
         vis.brush = d3.brush()
           .extent([[0, 0], [vis.width, vis.height]]);
 
-        vis.svg.append('path')
-          .datum(topojson.mesh(vis.data, vis.data.objects.states, function(a,b){return a !== b;}))
-          .attr("id", "state-borders")
-          .attr('d', vis.geoPath)
-          .attr('transform', `translate(${vis.config.margin.left},${vis.config.margin.top})`);
+        // vis.svg.append('path')
+        //   .datum(topojson.mesh(vis.data, vis.data.objects.states, function(a,b){return a !== b;}))
+        //   .attr("id", "state-borders")
+        //   .attr('d', vis.geoPath)
+        //   .attr('transform', `translate(${vis.config.margin.left},${vis.config.margin.top})`);
 
 
         vis.updateVis();

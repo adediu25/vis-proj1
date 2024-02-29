@@ -2,8 +2,8 @@ class Scatterplot {
     constructor(_config, _data) {
         this.config = {
             parentElement: _config.parentElement,
-            containerWidth: _config.containerWidth || 700,
-            containerHeight: _config.containerHeight || 500,
+            containerWidth: _config.containerWidth || 500,
+            containerHeight: _config.containerHeight || 400,
             margin: _config.margin || {top: 30, right: 20, bottom: 40, left: 45},
             tooltipPadding: _config.tooltipPadding || 10,
             dataFuncX: _config.dataFuncX || function(d){return d.median_household_income;},

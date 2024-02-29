@@ -5,8 +5,8 @@ class Histogram {
         // you might want to use getter and setter methods for individual attributes
         this.config = {
           parentElement: _config.parentElement,
-          containerWidth: _config.containerWidth || 700,
-          containerHeight: _config.containerHeight || 500,
+          containerWidth: _config.containerWidth || 500,
+          containerHeight: _config.containerHeight || 300,
           margin: _config.margin || {top: 20, right: 20, bottom: 40, left: 40},
           tooltipPadding: _config.tooltipPadding || 10,
           dataFunc: _config.dataFunc || function(d){return d.median_household_income;},

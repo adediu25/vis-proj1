@@ -5,8 +5,8 @@ class BarChart {
         // you might want to use getter and setter methods for individual attributes
         this.config = {
           parentElement: _config.parentElement,
-          containerWidth: _config.containerWidth || 700,
-          containerHeight: _config.containerHeight || 500,
+          containerWidth: _config.containerWidth || 400,
+          containerHeight: _config.containerHeight || 300,
           margin: _config.margin || {top: 20, right: 5, bottom: 20, left: 50},
           tooltipPadding: _config.tooltipPadding || 10,
         }
