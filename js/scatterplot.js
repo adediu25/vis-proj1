@@ -12,7 +12,7 @@ class Scatterplot {
             axisTitleY: _config.axisTitleY || "Park Access"
         }
         this.data = _data;
-        this.filteredData;
+        this.filteredData = [];
         this.resettingBrush = false;
         this.updatingFromBrush = false;
         this.initVis();
@@ -105,6 +105,8 @@ class Scatterplot {
 
         let circles;
 
+        const filteredSet = new Set(vis.filteredData);
+
         circles = vis.chart.selectAll('circle')
             // filter out data not collected
             .data(vis.data.filter(d => vis.config.dataFuncX(d) >= 0 && vis.config.dataFuncY(d) >= 0))
@@ -112,18 +114,30 @@ class Scatterplot {
             .attr('r', 3)
             .attr('cy', d => vis.yScale(vis.config.dataFuncY(d)))
             .attr('cx', d => vis.xScale(vis.config.dataFuncX(d)))
-            .attr('fill', 'steelblue');
+            .style('fill', function(d) {
+                if (!vis.resettingBrush && vis.updatingFromBrush){
+                    if(filteredSet.has(d)){
+                        return 'steelblue';
+                    }
+                    else{
+                        return 'lightgray';
+                    }
+                }
+                else{
+                    return 'steelblue';
+                }
+            });
 
-        if (!vis.resettingBrush && vis.updatingFromBrush){
-            const filteredSet = new Set(vis.filteredData);
-            circles = vis.chart.selectAll('circle')
-                .data(vis.data)
-                .join('circle')
-                .filter(function(d) {
-                    return !filteredSet.has(d);
-                })   
-                .style("fill", "lightgray")
-        }
+        // if (!vis.resettingBrush && vis.updatingFromBrush){
+        //     const filteredSet = new Set(vis.filteredData);
+        //     circles = vis.chart.selectAll('circle')
+        //         .data(vis.data)
+        //         .join('circle')
+        //         .filter(function(d) {
+        //             return !filteredSet.has(d);
+        //         })   
+        //         .style("fill", "lightgray")
+        // }
 
 
         // vis.brushG.call(vis.brush);
@@ -157,7 +171,6 @@ class Scatterplot {
                     clientX: event.clientX,
                     clientY: event.clientY
                 })
-                console.log(new_event.type);
                 brush_element.dispatchEvent(new_event);
             });
    
@@ -208,9 +221,11 @@ class Scatterplot {
                         brushedData: filteredData
                     }}))
             }
+            else{
+                circles.style('fill', 'steelblue')
+            }
         })
         .on('start', function() {
-            console.log('started');
             // vis.updateVis();
             if (!vis.resettingBrush){
                 // vis.updateVis();

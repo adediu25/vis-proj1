@@ -13,6 +13,7 @@ class BarChart {
         this.data = _data;
         this.fullData = this.data;
         this.resettingBrush = false;
+        this.updatingFromBrush = false;
         this.initVis();
       }
 
@@ -79,12 +80,12 @@ class BarChart {
                 count: vis.data.filter(d => d.urban_rural_status == 'Urban').length
             },
             {
-                value: 'Small City',
-                count: vis.data.filter(d => d.urban_rural_status == 'Small City').length
-            },
-            {
                 value: 'Suburban',
                 count: vis.data.filter(d => d.urban_rural_status == 'Suburban').length
+            },
+            {
+                value: 'Small City',
+                count: vis.data.filter(d => d.urban_rural_status == 'Small City').length
             },
             {
                 value: 'Rural',
@@ -155,7 +156,7 @@ class BarChart {
                 bars.style("fill", "steelblue");
             }
 
-            if(!vis.resettingBrush && selection){
+            if(!vis.resettingBrush && !vis.updatingFromBrush && selection){
                 const [x0, x1] = selection;
 
                 let filteredData = vis.data.filter(d => x0 <= vis.xScale(d.urban_rural_status) + vis.xScale.bandwidth() && vis.xScale(d.urban_rural_status) < x1);
@@ -168,7 +169,6 @@ class BarChart {
             }
         }
         ).on('start', function() {
-            console.log('started');
             // vis.updateVis();
             if (!vis.resettingBrush){
                 d3.select(vis.config.parentElement)
@@ -189,8 +189,10 @@ class BarChart {
     updateFromBrush(brushedData){
         let vis = this;
 
+        vis.updatingFromBrush = true;
         vis.data = brushedData;
         vis.updateVis();
+        vis.updatingFromBrush = false;
         vis.data = vis.fullData;
     }
 }

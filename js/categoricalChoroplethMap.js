@@ -46,7 +46,7 @@ class CategoricalChoroplethMap {
         vis.geoPath = d3.geoPath().projection(vis.projection);
 
         vis.colorScale = d3.scaleOrdinal()
-            .domain(['Rural', 'Suburban', 'Small City', 'Urban'])
+            .domain(['Rural', 'Small City', 'Suburban', 'Urban'])
             // .range(d3.schemeBlues[4]);
             // .range(['#B6D4E7', '#5E99C5', '#4682B4', '#2A6A9E']);
             .range(['#cfe2f2', '#99b3cf', '#3a588b', '#0d306b']);
@@ -250,7 +250,7 @@ class CategoricalChoroplethMap {
               })
               .data();
 
-              if (!vis.resettingBrush){
+              if (!vis.resettingBrush && !vis.updatingFromBrush){
                 d3.select(vis.config.parentElement)
                   .node()
                   .dispatchEvent(new CustomEvent('brush-selection', {detail:{
@@ -268,7 +268,6 @@ class CategoricalChoroplethMap {
           }
           }
         ).on('start', function() {
-            console.log('started')
             if (!vis.resettingBrush){
                 d3.select(vis.config.parentElement)
                     .node()

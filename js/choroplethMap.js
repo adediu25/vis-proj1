@@ -248,7 +248,7 @@ class ChoroplethMap {
               })
               .data();
 
-              if (!vis.resettingBrush){
+              if (!vis.resettingBrush && !vis.updatingFromBrush){
                 d3.select(vis.config.parentElement)
                   .node()
                   .dispatchEvent(new CustomEvent('brush-selection', {detail:{

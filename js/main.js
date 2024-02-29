@@ -100,15 +100,15 @@ d3.select("#dataY").on("input", function(){
 // event is triggered by a brush start 
 // then call for brush to be reset on every other visualization
 d3.selectAll('.parent').on('brush-start', function(event){
-    visList.filter(d => d.config.parentElement != event.srcElement.id).forEach(function(d) {d.resetBrush();});
+    visList.filter(d => d.config.parentElement.slice(1) != event.srcElement.id).forEach(function(d) {d.resetBrush();});
 });
 
-// d3.selectAll('.parent').on('brush-start', function(event){
-//     visList.filter(d => 
-//         d.config.parentElement != event.srcElement.id).forEach(function(d) {
-//             d.resetBrush(event.detail.brushedData);
-//     });
-// });
+d3.selectAll('.parent').on('brush-selection', function(event){
+    visList.filter(d => d.config.parentElement.slice(1) != event.srcElement.id)
+        .forEach(function(d) {
+            d.updateFromBrush(event.detail.brushedData);
+    });
+});
 
 // d3.select('.parent').on('brush-selection', function(event){
 //     // console.log(event.detail.brushedData);
@@ -134,25 +134,25 @@ d3.selectAll('.parent').on('brush-start', function(event){
 //     scatterplot.updateFromBrush(event.detail.brushedData);
 // });
 
-d3.select('#map1').on('brush-selection', function(event){
-    // console.log(event.detail.brushedData);
-    histogram2.updateFromBrush(event.detail.brushedData);
-    histogram1.updateFromBrush(event.detail.brushedData);
-    scatterplot.updateFromBrush(event.detail.brushedData);
-    choroplethMap2.updateFromBrush(event.detail.brushedData);
-    urbanMap.updateFromBrush(event.detail.brushedData);
-    urbanHistogram.updateFromBrush(event.detail.brushedData);
-});
+// d3.select('#map1').on('brush-selection', function(event){
+//     // console.log(event.detail.brushedData);
+//     histogram2.updateFromBrush(event.detail.brushedData);
+//     histogram1.updateFromBrush(event.detail.brushedData);
+//     scatterplot.updateFromBrush(event.detail.brushedData);
+//     choroplethMap2.updateFromBrush(event.detail.brushedData);
+//     urbanMap.updateFromBrush(event.detail.brushedData);
+//     urbanHistogram.updateFromBrush(event.detail.brushedData);
+// });
 
-d3.select('#map3').on('brush-selection', function(event){
-    // console.log(event.detail.brushedData);
-    histogram2.updateFromBrush(event.detail.brushedData);
-    histogram1.updateFromBrush(event.detail.brushedData);
-    scatterplot.updateFromBrush(event.detail.brushedData);
-    choroplethMap2.updateFromBrush(event.detail.brushedData);
-    choroplethMap1.updateFromBrush(event.detail.brushedData);
-    urbanHistogram.updateFromBrush(event.detail.brushedData);
-});
+// d3.select('#map3').on('brush-selection', function(event){
+//     // console.log(event.detail.brushedData);
+//     histogram2.updateFromBrush(event.detail.brushedData);
+//     histogram1.updateFromBrush(event.detail.brushedData);
+//     scatterplot.updateFromBrush(event.detail.brushedData);
+//     choroplethMap2.updateFromBrush(event.detail.brushedData);
+//     choroplethMap1.updateFromBrush(event.detail.brushedData);
+//     urbanHistogram.updateFromBrush(event.detail.brushedData);
+// });
 
 // returns anon function which will be given to each construct
 // to specify which attribute to pull from data and graph

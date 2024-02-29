@@ -15,7 +15,7 @@ class Histogram {
         this.data = _data;
         this.fullData = this.data;
         this.resettingBrush = false;
-        // this.filteredData = [];
+        this.updatingFromBrush = false;
         this.initVis();
       }
 
@@ -148,7 +148,7 @@ class Histogram {
                 bars.style("fill", "steelblue");
             }
 
-            if(!vis.resettingBrush && selection){
+            if(!vis.resettingBrush && !vis.updatingFromBrush && selection){
                 const [x0, x1] = selection;
 
                 let filteredData = [];
@@ -194,8 +194,10 @@ class Histogram {
     updateFromBrush(brushedData){
         let vis = this;
 
+        vis.updatingFromBrush = true;
         vis.data = brushedData;
         vis.updateVis();
         vis.data = vis.fullData;
+        vis.updatingFromBrush = false;
     }
 }
