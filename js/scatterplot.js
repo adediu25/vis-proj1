@@ -120,7 +120,7 @@ class Scatterplot {
                         return 'steelblue';
                     }
                     else{
-                        return 'lightgray';
+                        return "rgba(211,211,211,0.3)";
                     }
                 }
                 else{
@@ -185,7 +185,7 @@ class Scatterplot {
             if (selection){
                 const [[x0, y0], [x1, y1]] = selection;
                 value = circles
-                .style("fill", "lightgray")
+                .style("fill", "rgba(211,211,211,0.3)")
                 .filter(d => x0 <= vis.xScale(vis.config.dataFuncX(d)) && vis.xScale(vis.config.dataFuncX(d)) <= x1
                         && y0 <= vis.yScale(vis.config.dataFuncY(d)) && vis.yScale(vis.config.dataFuncY(d)) <= y1)
                 .style("fill", "steelblue")
