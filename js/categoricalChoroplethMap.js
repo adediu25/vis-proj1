@@ -26,7 +26,11 @@ class CategoricalChoroplethMap {
         vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom;
 
         // Define size of SVG drawing area
-        vis.svg = d3.select(vis.config.parentElement).append('svg')
+        // vis.svg = d3.select(vis.config.parentElement).append('svg')
+        //     .attr('width', vis.config.containerWidth)
+        //     .attr('height', vis.config.containerHeight);
+
+        vis.svg = d3.select('#urb-map')
             .attr('width', vis.config.containerWidth)
             .attr('height', vis.config.containerHeight);
 
@@ -54,23 +58,23 @@ class CategoricalChoroplethMap {
 
 
         // Initialize gradient that we will later use for the legend
-        vis.linearGradient = vis.svg.append('defs').append('linearGradient')
-            .attr("id", "legend-gradient");
+        // vis.linearGradient = vis.svg.append('defs').append('linearGradient')
+        //     .attr("id", "legend-gradient");
 
         // Append legend
-        vis.legend = vis.chart.append('g')
-            .attr('class', 'legend')
-            .attr('transform', `translate(${vis.config.legendLeft},${vis.height - vis.config.legendBottom})`);
+        // vis.legend = vis.chart.append('g')
+        //     .attr('class', 'legend')
+        //     .attr('transform', `translate(${vis.config.legendLeft},${vis.height - vis.config.legendBottom})`);
         
-        vis.legendRect = vis.legend.append('rect')
-            .attr('width', vis.config.legendRectWidth)
-            .attr('height', vis.config.legendRectHeight);
+        // vis.legendRect = vis.legend.append('rect')
+        //     .attr('width', vis.config.legendRectWidth)
+        //     .attr('height', vis.config.legendRectHeight);
 
-        vis.legendTitle = vis.legend.append('text')
-            .attr('class', 'legend-title')
-            .attr('dy', '.35em')
-            .attr('y', -10)
-            .text('Urban/Rural Status');
+        // vis.legendTitle = vis.legend.append('text')
+        //     .attr('class', 'legend-title')
+        //     .attr('dy', '.35em')
+        //     .attr('y', -10)
+        //     .text('Urban/Rural Status');
 
         vis.chart.append('path')
           .datum(topojson.mesh(vis.data, vis.data.objects.states, function(a,b){return a !== b;}))
@@ -103,10 +107,10 @@ class CategoricalChoroplethMap {
         // vis.colorScale.domain(dataExtent);
 
         // Define begin and end of the color gradient (legend)
-        vis.legendStops = [
-        { color: '#cfe2f2', value: dataExtent[0], offset: 0},
-        { color: '#0d306b', value: dataExtent[1], offset: 100},
-        ];
+        // vis.legendStops = [
+        // { color: '#cfe2f2', value: dataExtent[0], offset: 0},
+        // { color: '#0d306b', value: dataExtent[1], offset: 100},
+        // ];
 
         vis.renderVis();
     }
@@ -181,26 +185,26 @@ class CategoricalChoroplethMap {
           });
     
         // Add legend labels
-        vis.legend.selectAll('.legend-label')
-            .data(vis.legendStops)
-          .join('text')
-            .attr('class', 'legend-label')
-            .attr('text-anchor', 'middle')
-            .attr('dy', '.35em')
-            .attr('y', 20)
-            .attr('x', (d,index) => {
-              return index == 0 ? 0 : vis.config.legendRectWidth;
-            })
-            .text(d => Math.round(d.value * 10 ) / 10);
+        // vis.legend.selectAll('.legend-label')
+        //     .data(vis.legendStops)
+        //   .join('text')
+        //     .attr('class', 'legend-label')
+        //     .attr('text-anchor', 'middle')
+        //     .attr('dy', '.35em')
+        //     .attr('y', 20)
+        //     .attr('x', (d,index) => {
+        //       return index == 0 ? 0 : vis.config.legendRectWidth;
+        //     })
+        //     .text(d => Math.round(d.value * 10 ) / 10);
     
         // Update gradient for legend
-        vis.linearGradient.selectAll('stop')
-            .data(vis.legendStops)
-          .join('stop')
-            .attr('offset', d => d.offset)
-            .attr('stop-color', d => d.color);
+        // vis.linearGradient.selectAll('stop')
+        //     .data(vis.legendStops)
+        //   .join('stop')
+        //     .attr('offset', d => d.offset)
+        //     .attr('stop-color', d => d.color);
     
-        vis.legendRect.attr('fill', 'url(#legend-gradient)');
+        // vis.legendRect.attr('fill', 'url(#legend-gradient)');
 
         
         // DONT NEED TO UPDATE FOR THIS

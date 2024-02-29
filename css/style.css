@@ -61,52 +61,6 @@ svg{
   pointer-events: none;
 }
 
-/* Select Buttons */
-.button {
-    border: none;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-  }
-
-  .button1 {
-    background-color: white;
-    color: black;
-    border: 2px solid #04AA6D;
-  }
-  
-  .button1:hover {
-    background-color: #04AA6D;
-    color: white;
-  }
-  
-  .button2 {
-    background-color: white;
-    color: black;
-    border: 2px solid #008CBA;
-  }
-  
-  .button2:hover {
-    background-color: #008CBA;
-    color: white;
-  }
-
-  .button3 {
-    background-color: white;
-    color: black;
-    border: 2px solid #ba3200;
-  }
-  
-  .button3:hover {
-    background-color: #ba3200;
-    color: white;
-  }
-
 /* .parent {
   display: grid;
   grid-template-columns: 1fr 1fr
@@ -137,25 +91,32 @@ svg{
   
   /* Legend */
   .legend {
-    margin: 20px 0;
+    margin: 0px 0;
     list-style: none;
     padding: 0;
   }
-  .legend-btn {
+
+  .legend li {
     display: inline-block;
     margin: 0 20px 0 0;
-    cursor: pointer;
-    transition: all ease-in-out 200ms;
   }
-  .legend-btn:hover.legend-btn.inactive:hover  {
-    /*opacity: 1.0;*/
-  }
-  .legend-btn.inactive {
-    opacity: 0.3;
-  }
-  .legend-symbol {
+
+  .legend-e {
     width: 12px;
     height: 12px;
     margin-right: 3px;
     display: inline-block;
+  }
+
+  .legend-e.urban {
+    background: #0d306b;
+  }
+  .legend-e.suburban {
+    background: #3a588b;
+  }
+  .legend-e.small-city {
+    background: #99b3cf;
+  }
+  .legend-e.rural {
+    background: #cfe2f2;
   }

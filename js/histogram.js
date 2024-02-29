@@ -7,7 +7,7 @@ class Histogram {
           parentElement: _config.parentElement,
           containerWidth: _config.containerWidth || 700,
           containerHeight: _config.containerHeight || 500,
-          margin: _config.margin || {top: 5, right: 5, bottom: 20, left: 50},
+          margin: _config.margin || {top: 20, right: 20, bottom: 40, left: 40},
           tooltipPadding: _config.tooltipPadding || 10,
           dataFunc: _config.dataFunc || function(d){return d.median_household_income;},
           axisTitle: _config.axisTitle || "Median Household Income (USD)"
@@ -60,7 +60,6 @@ class Histogram {
             .tickSizeOuter(0);
 
         vis.yAxis = d3.axisLeft(vis.yScale)
-            .tickSizeOuter(0);
 
         vis.xAxisG = vis.chart.append('g')
             .attr('class', 'axis x-axis')
@@ -70,6 +69,20 @@ class Histogram {
             .attr('class', 'axis y-axis');
 
         // Append titles
+        vis.chart.append('text')
+            .attr('class', 'x-axis-title')
+            .attr('y', vis.height + 25)
+            .attr('x', vis.width + 10)
+            .attr('dy', '.71em')
+            .style('text-anchor', 'end')
+            .text(vis.config.axisTitle);
+
+        vis.svg.append('text')
+            .attr('class', 'y-axis-title')
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr('dy', '.71em')
+            .text('Number of Counties');
     }
 
     updateVis() {
@@ -167,8 +180,10 @@ class Histogram {
                     }}))
             }
 
+            if (vis.resettingBrush){
+                vis.updateVis();
             }
-        )
+        })
         // .on('end', function({selection}) {
 
         // })

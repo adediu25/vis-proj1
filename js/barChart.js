@@ -7,7 +7,7 @@ class BarChart {
           parentElement: _config.parentElement,
           containerWidth: _config.containerWidth || 700,
           containerHeight: _config.containerHeight || 500,
-          margin: _config.margin || {top: 5, right: 5, bottom: 20, left: 50},
+          margin: _config.margin || {top: 20, right: 5, bottom: 20, left: 50},
           tooltipPadding: _config.tooltipPadding || 10,
         }
         this.data = _data;
@@ -59,7 +59,6 @@ class BarChart {
             .tickSizeOuter(0);
 
         vis.yAxis = d3.axisLeft(vis.yScale)
-            .tickSizeOuter(0);
 
         vis.xAxisG = vis.chart.append('g')
             .attr('class', 'axis x-axis')
@@ -69,6 +68,13 @@ class BarChart {
             .attr('class', 'axis y-axis');
 
         // Append titles
+
+        vis.svg.append('text')
+            .attr('class', 'y-axis-title')
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr('dy', '.71em')
+            .text('Number of Counties');
     }
 
     updateVis() {

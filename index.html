@@ -59,7 +59,7 @@
             <select id="dataY">
                 <option value="poverty_perc">Poverty Percentage</option>
                 <option value="median_household_income">Median Household Income</option>
-                <option value="education_less_than_high_school_percent">Education Less That High School Percentage</option>
+                <option value="education_less_than_high_school_percent">Education Less Than High School Percentage</option>
                 <option value="air_quality">Air Quality</option>
                 <option selected="selected" value="park_access">Park Access</option>
                 <option value="percent_inactive">Percent Inactive</option>
@@ -94,9 +94,21 @@
 
     <div class="scatterplot parent" id="scatterplot"></div>
 
+    <div>
+        <h2>Urban Rural Statuses</h2>
+    </div> 
+
     <div class="urban-rural container">
         <div id="histogram3" class="inline parent"></div>
-        <div id="map3" class="inline parent"></div>
+        <div id="map3" class="inline parent">
+            <svg id="urb-map"></svg>
+            <ul class="legend">
+                <li><span class="legend-e urban"></span>Urban</li>
+                <li><span class="legend-e suburban"></span>Suburban</li>
+                <li><span class="legend-e small-city"></span>Small City</li>
+                <li><span class="legend-e rural"></span>Rural</li>
+            </ul>
+        </div>
     </div>
 
 

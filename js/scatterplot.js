@@ -4,7 +4,7 @@ class Scatterplot {
             parentElement: _config.parentElement,
             containerWidth: _config.containerWidth || 700,
             containerHeight: _config.containerHeight || 500,
-            margin: _config.margin || {top: 30, right: 20, bottom: 20, left: 35},
+            margin: _config.margin || {top: 30, right: 20, bottom: 40, left: 45},
             tooltipPadding: _config.tooltipPadding || 10,
             dataFuncX: _config.dataFuncX || function(d){return d.median_household_income;},
             dataFuncY: _config.dataFuncY || function(d){return d.park_access;},
@@ -57,7 +57,7 @@ class Scatterplot {
 
         vis.chart.append('text')
             .attr('class', 'x-axis-title')
-            .attr('y', vis.height - 15)
+            .attr('y', vis.height + 25)
             .attr('x', vis.width + 10)
             .attr('dy', '.71em')
             .style('text-anchor', 'end')
@@ -89,7 +89,7 @@ class Scatterplot {
         // update x axis label
         vis.chart.selectAll('.x-axis-title').join('text')
             .attr('class', 'x-axis-title')
-            .attr('y', vis.height - 15)
+            .attr('y', vis.height + 25)
             .attr('x', vis.width + 10)
             .attr('dy', '.71em')
             .style('text-anchor', 'end')
