@@ -107,6 +107,14 @@ class Histogram {
     renderVis(){
         let vis = this;
 
+        vis.chart.append('text')
+            .attr('class', 'x-axis-title')
+            .attr('y', vis.height + 25)
+            .attr('x', vis.width + 10)
+            .attr('dy', '.71em')
+            .style('text-anchor', 'end')
+            .text(vis.config.axisTitle);
+
         const bars = vis.chart.selectAll('.bar')
             .data(vis.bins)
         .join('rect')
